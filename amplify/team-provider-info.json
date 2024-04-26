@@ -1,0 +1,39 @@
+{
+  "dev": {
+    "awscloudformation": {
+      "AuthRoleName": "amplify-handle-dev-af628-authRole",
+      "UnauthRoleArn": "arn:aws:iam::767397810364:role/amplify-handle-dev-af628-unauthRole",
+      "AuthRoleArn": "arn:aws:iam::767397810364:role/amplify-handle-dev-af628-authRole",
+      "Region": "eu-west-2",
+      "DeploymentBucketName": "amplify-handle-dev-af628-deployment",
+      "UnauthRoleName": "amplify-handle-dev-af628-unauthRole",
+      "StackName": "amplify-handle-dev-af628",
+      "StackId": "arn:aws:cloudformation:eu-west-2:767397810364:stack/amplify-handle-dev-af628/47201700-f8f7-11ee-b137-022fb90cafa7",
+      "AmplifyAppId": "d2en4bqo2sjuri",
+      "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-handle-dev-af628-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
+    },
+    "categories": {
+      "api": {
+        "handle": {},
+        "AdminQueries": {}
+      },
+      "storage": {
+        "invoices": {}
+      },
+      "function": {
+        "handle9b99d9d0PostConfirmation": {
+          "GROUP": "",
+          "deploymentBucketName": "amplify-handle-dev-af628-deployment",
+          "s3Key": "amplify-builds/handle9b99d9d0PostConfirmation-4f2f646647474c764e69-build.zip"
+        },
+        "AdminQueries38793184": {
+          "deploymentBucketName": "amplify-handle-dev-af628-deployment",
+          "s3Key": "amplify-builds/AdminQueries38793184-75726558426e2b316458-build.zip"
+        }
+      },
+      "auth": {
+        "handle9b99d9d0": {}
+      }
+    }
+  }
+}
