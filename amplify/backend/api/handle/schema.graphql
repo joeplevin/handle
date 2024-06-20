@@ -1,9 +1,9 @@
 # This "input" configures a global authorization rule to enable public access to
 # all models in this schema. Learn more about authorization rules here: https://docs.amplify.aws/cli/graphql/authorization-rules
-input AMPLIFY {
-  globalAuthRule: AuthRule = {allow: public}
-} # FOR TESTING ONLY!
-type Supplier @model {
+# FOR TESTING ONLY!
+type Supplier
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   name: String!
   email: String!
@@ -12,9 +12,12 @@ type Supplier @model {
   catalogItems: [CatalogItem] @hasMany
   invoices: [Invoice] @hasMany
   supplierInventoryLinks: [SupplierInventoryLink] @hasMany
+  groups: [String]
 }
 
-type CatalogItem @model {
+type CatalogItem
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   supplier: Supplier @belongsTo
   supplierId: ID!
@@ -22,22 +25,30 @@ type CatalogItem @model {
   pricePerUnit: Float
   availableQuantity: Int
   inventoryItems: [InventoryItem] @hasMany
+  groups: [String]
 }
 
-type InventoryItem @model {
+type InventoryItem
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   name: String!
   weight: Float
+  units: Int
   averagePrice: Float
   catalogItem: CatalogItem @belongsTo
-  catalogItemId: ID!
+  catalogItemId: ID
   invoiceItems: [InvoiceItem] @hasMany
   supplierInventoryLinks: [SupplierInventoryLink] @hasMany
   usedInRecipes: [RecipeItem] @hasMany
   waste: [WasteItem] @hasMany
+  groups: [String]
+  minQuantity: Int
 }
 
-type SupplierInventoryLink @model {
+type SupplierInventoryLink
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   supplier: Supplier @belongsTo
   supplierId: ID!
@@ -46,9 +57,12 @@ type SupplierInventoryLink @model {
   pricePerUnit: Float
   lastDeliveryDate: AWSDateTime
   deliveryWeight: Float
+  groups: [String]
 }
 
-type Invoice @model {
+type Invoice
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   supplier: Supplier @belongsTo
   supplierId: ID!
@@ -57,9 +71,12 @@ type Invoice @model {
   totalAmount: Float
   imageUrl: String
   items: [InvoiceItem] @hasMany
+  groups: [String]
 }
 
-type InvoiceItem @model {
+type InvoiceItem
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   invoice: Invoice @belongsTo
   invoiceId: ID!
@@ -69,29 +86,40 @@ type InvoiceItem @model {
   totalQuantity: Int
   acceptedQuantity: Int
   weight: Float
+  units: Int
   pricePerUnit: Float
   expiryDate: AWSDateTime
   accepted: Boolean!
   rejectionReasons: [RejectionReason] @hasMany
+  groups: [String]
 }
 
-type RejectionReason @model {
+type RejectionReason
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   invoiceItem: InvoiceItem @belongsTo
   invoiceItemId: ID!
   reason: String!
+  groups: [String]
 }
 
-type Recipe @model {
+type Recipe
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   name: String!
   description: String
   preparationTime: Int
   cookingTime: Int
   recipeItems: [RecipeItem] @hasMany
+  groups: [String]
+  minQuantity: Int
 }
 
-type RecipeItem @model {
+type RecipeItem
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   recipe: Recipe @belongsTo
   recipeId: ID!
@@ -99,13 +127,17 @@ type RecipeItem @model {
   inventoryItemId: ID
   quantityUsed: Float
   wasteGenerated: Float
+  groups: [String]
 }
 
-type WasteItem @model {
+type WasteItem
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   inventoryItem: InventoryItem @belongsTo
   inventoryItemId: ID!
   quantity: Float
   date: AWSDateTime
   reason: String
+  groups: [String]
 }

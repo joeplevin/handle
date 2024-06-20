@@ -21,8 +21,10 @@ export const getSupplier = /* GraphQL */ `
         nextToken
         __typename
       }
+      groups
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -40,8 +42,10 @@ export const listSuppliers = /* GraphQL */ `
         email
         phone
         address
+        groups
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken
@@ -59,8 +63,10 @@ export const getCatalogItem = /* GraphQL */ `
         email
         phone
         address
+        groups
         createdAt
         updatedAt
+        owner
         __typename
       }
       supplierId
@@ -71,9 +77,11 @@ export const getCatalogItem = /* GraphQL */ `
         nextToken
         __typename
       }
+      groups
       createdAt
       updatedAt
       supplierCatalogItemsId
+      owner
       __typename
     }
   }
@@ -91,9 +99,11 @@ export const listCatalogItems = /* GraphQL */ `
         name
         pricePerUnit
         availableQuantity
+        groups
         createdAt
         updatedAt
         supplierCatalogItemsId
+        owner
         __typename
       }
       nextToken
@@ -107,6 +117,7 @@ export const getInventoryItem = /* GraphQL */ `
       id
       name
       weight
+      units
       averagePrice
       catalogItem {
         id
@@ -114,9 +125,11 @@ export const getInventoryItem = /* GraphQL */ `
         name
         pricePerUnit
         availableQuantity
+        groups
         createdAt
         updatedAt
         supplierCatalogItemsId
+        owner
         __typename
       }
       catalogItemId
@@ -136,9 +149,12 @@ export const getInventoryItem = /* GraphQL */ `
         nextToken
         __typename
       }
+      groups
+      minQuantity
       createdAt
       updatedAt
       catalogItemInventoryItemsId
+      owner
       __typename
     }
   }
@@ -154,11 +170,15 @@ export const listInventoryItems = /* GraphQL */ `
         id
         name
         weight
+        units
         averagePrice
         catalogItemId
+        groups
+        minQuantity
         createdAt
         updatedAt
         catalogItemInventoryItemsId
+        owner
         __typename
       }
       nextToken
@@ -176,8 +196,10 @@ export const getSupplierInventoryLink = /* GraphQL */ `
         email
         phone
         address
+        groups
         createdAt
         updatedAt
+        owner
         __typename
       }
       supplierId
@@ -185,21 +207,27 @@ export const getSupplierInventoryLink = /* GraphQL */ `
         id
         name
         weight
+        units
         averagePrice
         catalogItemId
+        groups
+        minQuantity
         createdAt
         updatedAt
         catalogItemInventoryItemsId
+        owner
         __typename
       }
       inventoryItemId
       pricePerUnit
       lastDeliveryDate
       deliveryWeight
+      groups
       createdAt
       updatedAt
       supplierSupplierInventoryLinksId
       inventoryItemSupplierInventoryLinksId
+      owner
       __typename
     }
   }
@@ -222,10 +250,12 @@ export const listSupplierInventoryLinks = /* GraphQL */ `
         pricePerUnit
         lastDeliveryDate
         deliveryWeight
+        groups
         createdAt
         updatedAt
         supplierSupplierInventoryLinksId
         inventoryItemSupplierInventoryLinksId
+        owner
         __typename
       }
       nextToken
@@ -243,8 +273,10 @@ export const getInvoice = /* GraphQL */ `
         email
         phone
         address
+        groups
         createdAt
         updatedAt
+        owner
         __typename
       }
       supplierId
@@ -256,9 +288,11 @@ export const getInvoice = /* GraphQL */ `
         nextToken
         __typename
       }
+      groups
       createdAt
       updatedAt
       supplierInvoicesId
+      owner
       __typename
     }
   }
@@ -277,9 +311,11 @@ export const listInvoices = /* GraphQL */ `
         date
         totalAmount
         imageUrl
+        groups
         createdAt
         updatedAt
         supplierInvoicesId
+        owner
         __typename
       }
       nextToken
@@ -298,9 +334,11 @@ export const getInvoiceItem = /* GraphQL */ `
         date
         totalAmount
         imageUrl
+        groups
         createdAt
         updatedAt
         supplierInvoicesId
+        owner
         __typename
       }
       invoiceId
@@ -308,11 +346,15 @@ export const getInvoiceItem = /* GraphQL */ `
         id
         name
         weight
+        units
         averagePrice
         catalogItemId
+        groups
+        minQuantity
         createdAt
         updatedAt
         catalogItemInventoryItemsId
+        owner
         __typename
       }
       inventoryItemId
@@ -320,6 +362,7 @@ export const getInvoiceItem = /* GraphQL */ `
       totalQuantity
       acceptedQuantity
       weight
+      units
       pricePerUnit
       expiryDate
       accepted
@@ -327,10 +370,12 @@ export const getInvoiceItem = /* GraphQL */ `
         nextToken
         __typename
       }
+      groups
       createdAt
       updatedAt
       inventoryItemInvoiceItemsId
       invoiceItemsId
+      owner
       __typename
     }
   }
@@ -350,13 +395,16 @@ export const listInvoiceItems = /* GraphQL */ `
         totalQuantity
         acceptedQuantity
         weight
+        units
         pricePerUnit
         expiryDate
         accepted
+        groups
         createdAt
         updatedAt
         inventoryItemInvoiceItemsId
         invoiceItemsId
+        owner
         __typename
       }
       nextToken
@@ -376,20 +424,25 @@ export const getRejectionReason = /* GraphQL */ `
         totalQuantity
         acceptedQuantity
         weight
+        units
         pricePerUnit
         expiryDate
         accepted
+        groups
         createdAt
         updatedAt
         inventoryItemInvoiceItemsId
         invoiceItemsId
+        owner
         __typename
       }
       invoiceItemId
       reason
+      groups
       createdAt
       updatedAt
       invoiceItemRejectionReasonsId
+      owner
       __typename
     }
   }
@@ -409,9 +462,11 @@ export const listRejectionReasons = /* GraphQL */ `
         id
         invoiceItemId
         reason
+        groups
         createdAt
         updatedAt
         invoiceItemRejectionReasonsId
+        owner
         __typename
       }
       nextToken
@@ -431,8 +486,11 @@ export const getRecipe = /* GraphQL */ `
         nextToken
         __typename
       }
+      groups
+      minQuantity
       createdAt
       updatedAt
+      owner
       __typename
     }
   }
@@ -450,8 +508,11 @@ export const listRecipes = /* GraphQL */ `
         description
         preparationTime
         cookingTime
+        groups
+        minQuantity
         createdAt
         updatedAt
+        owner
         __typename
       }
       nextToken
@@ -469,8 +530,11 @@ export const getRecipeItem = /* GraphQL */ `
         description
         preparationTime
         cookingTime
+        groups
+        minQuantity
         createdAt
         updatedAt
+        owner
         __typename
       }
       recipeId
@@ -478,20 +542,26 @@ export const getRecipeItem = /* GraphQL */ `
         id
         name
         weight
+        units
         averagePrice
         catalogItemId
+        groups
+        minQuantity
         createdAt
         updatedAt
         catalogItemInventoryItemsId
+        owner
         __typename
       }
       inventoryItemId
       quantityUsed
       wasteGenerated
+      groups
       createdAt
       updatedAt
       inventoryItemUsedInRecipesId
       recipeRecipeItemsId
+      owner
       __typename
     }
   }
@@ -509,10 +579,12 @@ export const listRecipeItems = /* GraphQL */ `
         inventoryItemId
         quantityUsed
         wasteGenerated
+        groups
         createdAt
         updatedAt
         inventoryItemUsedInRecipesId
         recipeRecipeItemsId
+        owner
         __typename
       }
       nextToken
@@ -528,20 +600,26 @@ export const getWasteItem = /* GraphQL */ `
         id
         name
         weight
+        units
         averagePrice
         catalogItemId
+        groups
+        minQuantity
         createdAt
         updatedAt
         catalogItemInventoryItemsId
+        owner
         __typename
       }
       inventoryItemId
       quantity
       date
       reason
+      groups
       createdAt
       updatedAt
       inventoryItemWasteId
+      owner
       __typename
     }
   }
@@ -559,9 +637,11 @@ export const listWasteItems = /* GraphQL */ `
         quantity
         date
         reason
+        groups
         createdAt
         updatedAt
         inventoryItemWasteId
+        owner
         __typename
       }
       nextToken

@@ -1,37 +1,23 @@
 {
   "api": {
-    "AdminQueries": {
-      "authorizationType": "AMAZON_COGNITO_USER_POOLS",
+    "handle": {
       "dependsOn": [
         {
           "attributes": [
             "UserPoolId"
           ],
           "category": "auth",
-          "resourceName": "handle9b99d9d0"
-        },
-        {
-          "attributes": [
-            "Arn",
-            "Name"
-          ],
-          "category": "function",
-          "resourceName": "AdminQueries38793184"
+          "resourceName": "handle9310d90d"
         }
       ],
-      "providerPlugin": "awscloudformation",
-      "service": "API Gateway"
-    },
-    "handle": {
-      "dependsOn": [],
       "output": {
         "authConfig": {
           "additionalAuthenticationProviders": [],
           "defaultAuthentication": {
-            "apiKeyConfig": {
-              "apiKeyExpirationDays": 7
-            },
-            "authenticationType": "API_KEY"
+            "authenticationType": "AMAZON_COGNITO_USER_POOLS",
+            "userPoolConfig": {
+              "userPoolId": "eu-west-2_3NgYXGCHS"
+            }
           }
         }
       },
@@ -40,7 +26,7 @@
     }
   },
   "auth": {
-    "handle9b99d9d0": {
+    "handle9310d90d": {
       "customAuth": false,
       "dependsOn": [
         {
@@ -49,7 +35,7 @@
             "Name"
           ],
           "category": "function",
-          "resourceName": "handle9b99d9d0PostConfirmation",
+          "resourceName": "handle9310d90dPostConfirmation",
           "triggerProvider": "Cognito"
         }
       ],
@@ -63,8 +49,7 @@
           "passwordPolicyMinLength": 8
         },
         "signupAttributes": [
-          "EMAIL",
-          "NAME"
+          "EMAIL"
         ],
         "socialProviders": [],
         "usernameAttributes": [
@@ -79,66 +64,44 @@
     }
   },
   "function": {
-    "AdminQueries38793184": {
-      "build": true,
-      "dependsOn": [
-        {
-          "attributes": [
-            "UserPoolId"
-          ],
-          "category": "auth",
-          "resourceName": "handle9b99d9d0"
-        }
-      ],
-      "providerPlugin": "awscloudformation",
-      "service": "Lambda"
-    },
-    "handle9b99d9d0PostConfirmation": {
+    "handle9310d90dPostConfirmation": {
       "build": true,
       "providerPlugin": "awscloudformation",
       "service": "Lambda"
     }
   },
   "parameters": {
-    "AMPLIFY_function_AdminQueries38793184_deploymentBucketName": {
+    "AMPLIFY_function_handle9310d90dPostConfirmation_GROUP": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "AdminQueries38793184"
+          "resourceName": "handle9310d90dPostConfirmation"
         }
       ]
     },
-    "AMPLIFY_function_AdminQueries38793184_s3Key": {
+    "AMPLIFY_function_handle9310d90dPostConfirmation_deploymentBucketName": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "AdminQueries38793184"
+          "resourceName": "handle9310d90dPostConfirmation"
         }
       ]
     },
-    "AMPLIFY_function_handle9b99d9d0PostConfirmation_GROUP": {
+    "AMPLIFY_function_handle9310d90dPostConfirmation_s3Key": {
       "usedBy": [
         {
           "category": "function",
-          "resourceName": "handle9b99d9d0PostConfirmation"
+          "resourceName": "handle9310d90dPostConfirmation"
         }
       ]
-    },
-    "AMPLIFY_function_handle9b99d9d0PostConfirmation_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "handle9b99d9d0PostConfirmation"
-        }
-      ]
-    },
-    "AMPLIFY_function_handle9b99d9d0PostConfirmation_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "handle9b99d9d0PostConfirmation"
-        }
-      ]
+    }
+  },
+  "predictions": {
+    "identifyTextc871873b": {
+      "dependsOn": [],
+      "identifyType": "identifyText",
+      "providerPlugin": "awscloudformation",
+      "service": "RekognitionAndTextract"
     }
   },
   "storage": {

@@ -12,7 +12,11 @@ const cognitoIdentityServiceProvider = new CognitoIdentityProviderClient({});
  */
 
 exports.handler = async event => {
-  const tenantId = crypto.randomBytes(16).toString('hex');
+  let tenantId = event.request.userAttributes['custom:tenant'];
+  console.log('event', event.request);
+  if (!tenantId) {
+    tenantId = crypto.randomBytes(16).toString('hex');
+  }
   const groupParams = {
     GroupName: tenantId,
     UserPoolId: event.userPoolId,
@@ -22,6 +26,7 @@ exports.handler = async event => {
     UserPoolId: event.userPoolId,
     Username: event.userName,
   };
+
   /**
    * Check if the group exists; if it doesn't, create it.
    */

@@ -1,10 +1,10 @@
 {
   "version": "1",
   "cognitoConfig": {
-    "identityPoolName": "handle9b99d9d0_identitypool_9b99d9d0",
-    "allowUnauthenticatedIdentities": false,
-    "resourceNameTruncated": "handle9b99d9d0",
-    "userPoolName": "handle9b99d9d0_userpool_9b99d9d0",
+    "identityPoolName": "handle9310d90d_identitypool_9310d90d",
+    "allowUnauthenticatedIdentities": true,
+    "resourceNameTruncated": "handle9310d90d",
+    "userPoolName": "handle9310d90d_userpool_9310d90d",
     "autoVerifiedAttributes": [
       "email"
     ],
@@ -14,14 +14,13 @@
     ],
     "smsAuthenticationMessage": "Your authentication code is {####}",
     "smsVerificationMessage": "Your verification code is {####}",
-    "emailVerificationSubject": "Welcome to Handle",
+    "emailVerificationSubject": "Your verification code",
     "emailVerificationMessage": "Your verification code is {####}",
     "defaultPasswordPolicy": false,
     "passwordPolicyMinLength": 8,
     "passwordPolicyCharacters": [],
     "requiredAttributes": [
-      "email",
-      "name"
+      "email"
     ],
     "aliasAttributes": [],
     "userpoolClientGenerateSecret": false,
@@ -32,20 +31,15 @@
     "userpoolClientReadAttributes": [
       "email"
     ],
-    "userpoolClientLambdaRole": "handle9b99d9d0_userpoolclient_lambda_role",
+    "userpoolClientLambdaRole": "handle9310d90d_userpoolclient_lambda_role",
     "userpoolClientSetAttributes": false,
-    "sharedId": "9b99d9d0",
-    "resourceName": "handle9b99d9d0",
+    "sharedId": "9310d90d",
+    "resourceName": "handle9310d90d",
     "authSelections": "identityPoolAndUserPool",
     "useDefault": "manual",
     "usernameAttributes": [
       "email"
     ],
-    "triggers": {
-      "PostConfirmation": [
-        "add-to-group"
-      ]
-    },
     "userPoolGroupList": [],
     "serviceName": "Cognito",
     "usernameCaseSensitive": false,
@@ -66,7 +60,7 @@
     "dependsOn": [
       {
         "category": "function",
-        "resourceName": "handle9b99d9d0PostConfirmation",
+        "resourceName": "handle9310d90dPostConfirmation",
         "triggerProvider": "Cognito",
         "attributes": [
           "Arn",
@@ -77,14 +71,21 @@
     "thirdPartyAuth": false,
     "userPoolGroups": false,
     "adminQueries": true,
+    "triggers": {
+      "PostConfirmation": [
+        "add-to-group"
+      ]
+    },
     "hostedUI": false,
     "authProviders": [],
     "parentStack": {
       "Ref": "AWS::StackId"
     },
-    "authTriggerConnections": "[\n  {\n    \"triggerType\": \"PostConfirmation\",\n    \"lambdaFunctionName\": \"handle9b99d9d0PostConfirmation\"\n  }\n]",
     "permissions": [
-      "{\n  \"policyName\": \"AddToGroupCognito\",\n  \"trigger\": \"PostConfirmation\",\n  \"effect\": \"Allow\",\n  \"actions\": [\n    \"cognito-idp:AdminAddUserToGroup\",\n    \"cognito-idp:GetGroup\",\n    \"cognito-idp:CreateGroup\"\n  ],\n  \"resource\": {\n    \"paramType\": \"!GetAtt\",\n    \"keys\": [\n      \"UserPool\",\n      \"Arn\"\n    ]\n  }\n}"
+      "{\"policyName\":\"AddToGroupCognito\",\"trigger\":\"PostConfirmation\",\"effect\":\"Allow\",\"actions\":[\"cognito-idp:AdminAddUserToGroup\",\"cognito-idp:GetGroup\",\"cognito-idp:CreateGroup\"],\"resource\":{\"paramType\":\"!GetAtt\",\"keys\":[\"UserPool\",\"Arn\"]}}"
+    ],
+    "authTriggerConnections": [
+      "{\"triggerType\":\"PostConfirmation\",\"lambdaFunctionName\":\"handle9310d90dPostConfirmation\"}"
     ]
   }
 }
