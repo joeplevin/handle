@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import {
   View,
   Image,
@@ -23,21 +23,47 @@ import {
   launchDocumentScannerAsync,
   ResultFormatOptions,
 } from '@infinitered/react-native-mlkit-document-scanner';
+import InvoiceReview from '../../components/Invoice/InvoiceReview';
+import {useInvoice} from '../../amplify/context/InvoiceContext';
 
 const InvoiceCameraScreen = ({navigation}) => {
   // Convert scanned image promise to file type.
-  const [scannedImage, setScannedImage] = useState(null);
-  const [uploading, setUploading] = useState(false);
-  const [uploaded, setUploaded] = useState(false);
-  const [userPoolId, setUserPoolId] = useState(null);
-  const [invoiceData, setInvoiceData] = useState(true);
-  const [invoiceUrl, setInvoiceUrl] = useState(null);
-  const [parseClick, setParseClick] = useState(false);
+  const [scannedImage, setScannedImage] = useState(
+    'file:///data/user/0/com.handle/cache/mlkit_docscan_ui_client/9334225746600.jpg',
+  );
   const [loading, setLoading] = useState(false);
-  const [parsed, setParsed] = useState(true);
+  const [parsed, setParsed] = useState(false);
   const [blob, setBlob] = useState(null);
+  // const [invoiceName, setInvoiceName] = useState(null);
 
-  const [parseInvoiceItemData, setParseInvoiceItemData] = useState([
+  // Extracted data converted to invoice sections
+  // 1. Invoice Items to be sent to db as inventory or as rejected items
+
+  // const [path, setPath] = useState(null);
+
+  const {
+    userPoolId,
+    setUserPoolId,
+    extractedData,
+    setExtractedData,
+    invoiceUrl,
+    setInvoiceUrl,
+    invoiceName,
+    setInvoiceName,
+    parseInvoiceItemData,
+    setParseInvoiceItemData,
+    parseInvoiceData,
+    setParseInvoiceData,
+    parseInvoiceSupplierData,
+    setParseInvoiceSupplierData,
+  } = useInvoice();
+
+  const testInvoice = {
+    invoice_number: '0003',
+    invoice_date: '1/4/2024',
+    total_cost: 153.65,
+  };
+  const testItems = [
     {
       item_name: '400g Rega San Marzano Tomatoes Tinned',
       price_per_unit: 2.5,
@@ -86,26 +112,18 @@ const InvoiceCameraScreen = ({navigation}) => {
       quantity: 1,
       weight: '',
     },
-  ]);
-  const [parseInvoiceData, setParseInvoiceData] = useState({
-    invoice_number: '0003',
-    invoice_date: '1/4/2024',
-    total_cost: 153.65,
-  });
-  const [parseInvoiceSupplierData, setParseInvoiceSupplierData] = useState({
+  ];
+  const testSupplier = {
     name: 'Delitrath',
     email: 'info@delitrath.com',
     phone: '(122) 456-7090',
-    address: {
-      street: 'Started Ave',
-      city: 'Shields',
-      state: 'NE19.BNG',
-    },
-  });
-  const [invoiceName, setInvoiceName] = useState(null);
-  const [path, setPath] = useState(null);
-  console.log('parsed invoice data: ', parseInvoiceData);
-  console.log('image', scannedImage);
+  };
+
+  // const [parseInvoiceItemData, setParseInvoiceItemData] = useState();
+  // 2. Invoice data to be processed as invoice details
+  // const [parseInvoiceData, setParseInvoiceData] = useState();
+  // 3. Supplier data to be processed as supplier details
+  // const [parseInvoiceSupplierData, setParseInvoiceSupplierData] = useState();
 
   const openai = new OpenAI({
     apiKey: 'sk-proj-IkqjrAAzp6Z01kQuXD1xT3BlbkFJH3DaiJlGfbwoTJBkjCgf',
@@ -120,77 +138,74 @@ const InvoiceCameraScreen = ({navigation}) => {
     userPool();
     if (userPoolId !== null) {
       setUserPoolId(userPoolId.toString());
-      // setPath(userPoolId + '/' + fileName);
     }
-    console.log('Path: ', path);
-  }, []);
-  console.log('UserPoolId on Camera screen: ', userPoolId);
 
+    // set invoice name to current datetime
+    setInvoiceName(new Date().toISOString());
+    console.log('Invoice Name: ', new Date().toISOString());
+  }, []);
+
+  console.log('UserPoolId on Camera screen: ', userPoolId);
+  console.log('Supplier on Camera Screen: ', parseInvoiceSupplierData);
   // Form setup
 
-  const extractData = async () => {
+  const extractData = async fileName => {
     console.log('Extracting data...');
     const response = await Predictions.identify({
       text: {
         source: {
-          key: `${userPoolId}/invoices/${invoiceName}`,
+          key: `${userPoolId}/invoices/${fileName}`,
         },
         format: 'FORM',
       },
     })
       .then(response => {
-        console.log(response['text']['fullText']);
-        setInvoiceData(response);
+        // if (response) {
+        //   if (
+        //     response['text']['fullText'] === '' ||
+        //     response['text']['fullText'] === null
+        //   ) {
+        //     Alert.alert('No text found in image. Please try again.');
+        //   }
+        // }
+        setExtractedData(response['text']['fullText']);
       })
       .catch(err => console.log({err}));
   };
 
-  const uploadInvoice = async () => {
+  const uploadInvoice = async fileName => {
     // upload the scanned image to the server
     console.log('Uploading invoice...');
     try {
-      console.log('Scanned Image: ', scannedImage);
+      console.log('fileName:', fileName);
       if (scannedImage !== null) {
         const response = await fetch(scannedImage);
         console.log('response', response);
         const responseBlob = await response.blob();
         setBlob(responseBlob);
-        setInvoiceName(new Date().toISOString());
         console.log('Scanned Image: ', scannedImage);
-      }
-    } catch (error) {
-      console.log('Error: ', error);
-    }
-    try {
-      console.log('Uploading invoice...', path);
-      const result = uploadData({
-        key: `${userPoolId}/invoices/${invoiceName}`,
-        data: blob,
-        options: {
-          onProgress: ({transferredBytes, totalBytes}) => {
-            if (totalBytes) {
-              console.log(
-                `Upload progress ${Math.round(
-                  (transferredBytes / totalBytes) * 100,
-                )} %`,
-              );
-            }
+        const result = uploadData({
+          key: `${userPoolId}/invoices/${fileName}`,
+          data: responseBlob,
+          options: {
+            onProgress: ({transferredBytes, totalBytes}) => {
+              if (totalBytes) {
+                console.log(
+                  `Upload progress ${Math.round(
+                    (transferredBytes / totalBytes) * 100,
+                  )} %`,
+                );
+              }
+            },
           },
-        },
-      }).result;
-      console.log('Path from Response: ', result.key);
-      console.log('actual response: ', result);
-    } catch (error) {
-      console.log('Upload error : ', error);
-      Alert('Error uploading invoice');
-    }
-    try {
+        }).result;
+      }
       const linkToStorageFile = await getUrl({
-        key: 'invoices/' + userPoolId + '/' + invoiceName,
+        key: userPoolId + '/invoices/' + fileName,
         // Alternatively, path: ({identityId}) => `album/{identityId}/1.jpg`
         options: {
           validateObjectExistence: false, // defaults to false
-          expiresIn: 20, // validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)
+          expiresIn: 900, // validity of the URL, in seconds. defaults to 900 (15 minutes) and maxes at 3600 (1 hour)
           useAccelerateEndpoint: false, // Whether to use accelerate endpoint.
         },
       });
@@ -199,7 +214,6 @@ const InvoiceCameraScreen = ({navigation}) => {
       console.log('URL expires at: ', linkToStorageFile.expiresAt);
     } catch (error) {
       console.log('Error : ', error);
-      Alert('Error uploading invoice');
     }
   };
 
@@ -215,88 +229,88 @@ const InvoiceCameraScreen = ({navigation}) => {
   };
   const parseInvoice = async () => {
     console.log('Parsing invoice...');
-    console.log('Invoice Data: ', invoiceData['text']['fullText']);
+    console.log('Invoice Data in parse: ', extractedData);
+
     try {
-      const response = await openai.chat.completions.create({
-        messages: [
-          {
-            role: 'system',
-            content: `Parse this invoice data: ${invoiceData['text']['fullText']}. The invoice data should be returned in JSON format & include the following objects: invoice, supplier & invoice_items. The invoice object should have the following fields if they exist: invoice_number, invoice_date & total_cost. The supplier object should contain name, email, phone & address fields. The address should contain first_line, city & postcode. Each invoice_item should contain item_name, quantity, weight & price_per_unit. Replace missing values with a string 'not found' & ensure all objects are named in lower case.`,
-          },
-        ],
-        model: 'gpt-3.5-turbo',
-        temperature: 1,
-        max_tokens: 4000,
-        top_p: 1,
-        frequency_penalty: 0,
-        presence_penalty: 0,
-      });
-      console.log('Response: ', response.choices[0].message.content);
-      const invoice = JSON.parse(response.choices[0].message.content);
-      console.log('Invoice: ', invoice);
-      if (
-        invoice.hasOwnProperty('invoice_items') &&
-        invoice.hasOwnProperty('invoice') &&
-        invoice.hasOwnProperty('supplier')
-      ) {
-        setParseInvoiceItemData(invoice['invoice_items']);
-        setParseInvoiceSupplierData(invoice['supplier']);
-        setParseInvoiceData(invoice['invoice']);
-        setParsed(true);
-        return response.choices[0].message.content;
+      if (extractedData !== '' && extractedData !== null) {
+        const response = await openai.chat.completions.create({
+          messages: [
+            {
+              role: 'system',
+              content: `Parse this data if it is an invoice: ${extractedData['text']['fullText']}. The invoice data should be returned in JSON format & include the following objects: invoice, supplier & invoice_items. The invoice object should have the following fields if they exist: invoice_number, invoice_date & total_cost. The supplier object should contain name, email & phone fields. The address should contain first_line, city & postcode. Each invoice_item should contain item_name, quantity, weight & price_per_unit. Replace missing values with a string 'not found' & ensure all objects are named in lower case.`,
+            },
+          ],
+          model: 'gpt-3.5-turbo',
+          temperature: 1,
+          max_tokens: 4000,
+          top_p: 1,
+          frequency_penalty: 0,
+          presence_penalty: 0,
+        });
+        console.log('Response: ', response.choices[0].message.content);
+        const invoice = JSON.parse(response.choices[0].message.content);
+        console.log('Invoice: ', invoice);
+        if (
+          invoice.hasOwnProperty('invoice_items') &&
+          invoice.hasOwnProperty('invoice') &&
+          invoice.hasOwnProperty('supplier')
+        ) {
+          setParseInvoiceItemData(invoice['invoice_items']);
+          setParseInvoiceSupplierData(invoice['supplier']);
+          setParseInvoiceData(invoice['invoice']);
+          return response.choices[0].message.content;
+        } else {
+          Alert.alert('An error occurred. Please try again.');
+        }
       } else {
-        Alert('Please try again');
+        setParseInvoiceItemData(testItems);
+        setParseInvoiceSupplierData(testSupplier);
+        setParseInvoiceData(testInvoice);
       }
+      setParsed(true);
     } catch (error) {
       console.log('Error: ', error);
     }
   };
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
+    setParsed(false);
     setLoading(true);
+    const fileName =
+      new Date().toISOString().split('.')[0].replace(/:/g, '-') + '.jpg';
+    setInvoiceName(fileName);
     try {
-      uploadInvoice();
-      if (invoiceUrl === null) {
-        throw new Error('Error uploading invoice');
-      }
-      extractData();
-      if (!invoiceData) {
-        throw new Error('Error extracting data');
-      }
-      parseInvoice();
-      if (parseInvoiceData === null) {
-        throw new Error('Error parsing invoice');
-      }
+      await uploadInvoice(fileName);
+      console.log('Upload complete');
+      await extractData(fileName);
+      console.log('Extraction complete');
+      await parseInvoice();
+      console.log('Parsing complete');
+      setLoading(false);
+      setParseInvoiceItemData(testItems);
+      setParseInvoiceSupplierData(testSupplier);
+      setParseInvoiceData(testInvoice);
+      console.log('Loading state set to false');
     } catch (error) {
-      new Alert('Error: Please try again');
+      console.log('Error: ', error);
+      Alert.alert('An error occurred. Please try again.');
     }
-    setLoading(false);
-    setUploaded(true);
   };
 
-  const onPressNext = () => {
-    navigation.navigate('InvoiceReviewScreen', {
-      invoiceItems: parseInvoiceItemData,
-      invoice: parseInvoiceData,
-      invoiceUrl: invoiceUrl,
-      supplier: parseInvoiceSupplierData,
-    });
-  };
+  // const onPressNext = () => {
+  //   navigation.navigate('InvoiceReviewScreen', {
+  //     invoiceItems: parseInvoiceItemData,
+  //     invoice: parseInvoiceData,
+  //     invoiceUrl: invoiceUrl,
+  //     supplier: parseInvoiceSupplierData,
+  //   });
+  // };
 
   return (
     <>
-      <View
-      // style={{
-      //   marginTop: 20,
-      //   height: '95%',
-      //   borderTopWidth: 1,
-      //   borderBottomWidth: 1,
-      //   borderColor: '#b8b8b8',
-      //   backgroundColor: '#fff',
-      // }}>
-      >
-        {!scannedImage && (
-          <View style={{height: '100%', width: '100%'}}>
+      <View>
+        {!scannedImage ? (
+          <View style={{height: '100%', width: '100%'}} key={1}>
             <View
               style={{
                 height: '100%',
@@ -336,6 +350,8 @@ const InvoiceCameraScreen = ({navigation}) => {
               </Text>
               <Pressable
                 onPress={async () => {
+                  // !loading
+                  setLoading(false);
                   // result will contain an object with the result information
                   const result = await launchDocumentScannerAsync({
                     pageLimit: 1,
@@ -367,96 +383,102 @@ const InvoiceCameraScreen = ({navigation}) => {
               </Pressable>
             </View>
           </View>
-        )}
-        {scannedImage && (
-          <View
-            style={{
-              flexDirection: 'row',
-              justifyContent: 'space-between',
-              width: '100%',
-              paddingTop: 10,
-              alignSelf: 'center',
-              backgroundColor: '#fff',
-            }}>
-            <Pressable
-              onPress={async () => {
-                // result will contain an object with the result information
-                const result = await launchDocumentScannerAsync({
-                  pageLimit: 1,
-                  galleryImportAllowed: true,
-                  resultFormats: ResultFormatOptions.JPEG,
-                });
-                setScannedImage(result['pages'][0]);
-              }}
-              style={{
-                justifyContent: 'center',
-                width: '20%',
-              }}>
-              <Text
-                style={{
-                  alignSelf: 'center',
-                  color: '#6883ba',
-                }}>
-                Retake
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={uploaded ? onPressNext : onSubmit}
-              style={{
-                justifyContent: 'center',
-                width: '20%',
-              }}>
-              <Text
-                style={{
-                  alignSelf: 'center',
-                  color: '#6883ba',
-                  fontWeight: 'bold',
-                }}>
-                {uploaded ? 'Next' : 'Save'}
-              </Text>
-            </Pressable>
-          </View>
-        )}
-        {scannedImage && (
-          <View style={{height: '100%', backgroundColor: '#fff'}}>
+        ) : (
+          <View key={1}>
             <View
               style={{
-                height: '80%',
-                width: '80%',
-                alignItems: 'center',
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '100%',
+                paddingTop: 10,
                 alignSelf: 'center',
+                backgroundColor: '#fff',
               }}>
-              <Image
-                resizeMode="contain"
-                style={{
-                  height: '100%',
-                  width: '100%',
-                  alignSelf: 'center',
-                  marginTop: 20,
+              <Pressable
+                onPress={async () => {
+                  // result will contain an object with the result information
+                  const result = await launchDocumentScannerAsync({
+                    pageLimit: 1,
+                    galleryImportAllowed: true,
+                    resultFormats: ResultFormatOptions.JPEG,
+                  });
+                  setScannedImage(result['pages'][0]);
                 }}
-                source={{uri: scannedImage}}
-              />
-            </View>
-
-            {/* {uploaded && (
-              <View>
-                <Pressable
-                  onPress={() => {
-                    onSubmit();
+                style={{
+                  justifyContent: 'center',
+                  width: '20%',
+                }}>
+                <Text
+                  style={{
+                    alignSelf: 'center',
+                    color: '#6883ba',
                   }}>
-                  <Text>Continue</Text>
-                </Pressable>
+                  Retake
+                </Text>
+              </Pressable>
+              <Pressable
+                onPress={async () => {
+                  await onSubmit();
+                }}
+                style={{
+                  justifyContent: 'center',
+                  width: '20%',
+                }}>
+                <Text
+                  style={{
+                    alignSelf: 'center',
+                    color: '#6883ba',
+                    fontWeight: 'bold',
+                  }}>
+                  Save
+                </Text>
+              </Pressable>
+            </View>
+            <View style={{height: '100%', backgroundColor: '#fff'}}>
+              <View
+                style={{
+                  height: '50%',
+                  width: '80%',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Image
+                  resizeMode="contain"
+                  style={{
+                    height: '100%',
+                    width: '100%',
+                    alignSelf: 'center',
+                    marginTop: 20,
+                  }}
+                  source={{uri: scannedImage}}
+                />
               </View>
-            )} */}
-          </View>
-        )}
-        {loading && (
-          <View>
-            <ActivityIndicator
-              size="large"
-              color="#f56042"
-              style={{alignSelf: 'center'}}
-            />
+              {parsed && (
+                <View>
+                  <Text style={{alignSelf: 'center', marginTop: 20}}>
+                    Invoice Details
+                  </Text>
+                  <InvoiceReview
+                    invoiceItems={parseInvoiceItemData}
+                    invoiceDetails={parseInvoiceData}
+                    invoiceUrl={invoiceUrl}
+                    invoiceSupplier={parseInvoiceSupplierData}
+                    userPoolId={userPoolId}
+                    key={1}
+                  />
+                </View>
+              )}
+              {loading && (
+                <View style={{backgroundColor: 'red'}}>
+                  <ActivityIndicator
+                    size="large"
+                    color="#f56042"
+                    style={{alignSelf: 'center'}}
+                  />
+                  <Text>Fully Loaded</Text>
+                </View>
+              )}
+            </View>
           </View>
         )}
       </View>

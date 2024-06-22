@@ -10,8 +10,8 @@ type Supplier
   phone: String
   address: String
   catalogItems: [CatalogItem] @hasMany
+  inventoryItems: [InventoryItem] @manyToMany(relationName: "SupplierInventory")
   invoices: [Invoice] @hasMany
-  supplierInventoryLinks: [SupplierInventoryLink] @hasMany
   groups: [String]
 }
 
@@ -39,25 +39,20 @@ type InventoryItem
   catalogItem: CatalogItem @belongsTo
   catalogItemId: ID
   invoiceItems: [InvoiceItem] @hasMany
-  supplierInventoryLinks: [SupplierInventoryLink] @hasMany
+  suppliers: [Supplier] @manyToMany(relationName: "SupplierInventory")
+  orderList: [OrderList] @manyToMany(relationName: "InventoryItemOrder")
   usedInRecipes: [RecipeItem] @hasMany
   waste: [WasteItem] @hasMany
   groups: [String]
   minQuantity: Int
 }
 
-type SupplierInventoryLink
+type OrderList
   @model
   @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
-  supplier: Supplier @belongsTo
-  supplierId: ID!
-  inventoryItem: InventoryItem @belongsTo
-  inventoryItemId: ID!
-  pricePerUnit: Float
-  lastDeliveryDate: AWSDateTime
-  deliveryWeight: Float
-  groups: [String]
+  name: String!
+  inventoryItem: [InventoryItem] @manyToMany(relationName: "InventoryItemOrder")
 }
 
 type Invoice
@@ -104,6 +99,27 @@ type RejectionReason
   groups: [String]
 }
 
+type MenuItem
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
+  id: ID!
+  name: String!
+  description: String
+  price: Float
+  recipes: [Recipe] @manyToMany(relationName: "MenuRecipe")
+  groups: [String]
+}
+
+type PrepList
+  @model
+  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
+  id: ID!
+  name: String!
+  recipes: [Recipe] @manyToMany(relationName: "PrepListRecipe")
+  recipeItems: [RecipeItem] @manyToMany(relationName: "PrepListRecipeItem")
+  groups: [String]
+}
+
 type Recipe
   @model
   @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
@@ -112,7 +128,9 @@ type Recipe
   description: String
   preparationTime: Int
   cookingTime: Int
-  recipeItems: [RecipeItem] @hasMany
+  recipeItems: [RecipeItem] @manyToMany(relationName: "RecipeRecipeItem")
+  prepList: [PrepList] @manyToMany(relationName: "PrepListRecipe")
+  menuItems: [MenuItem] @manyToMany(relationName: "MenuRecipe")
   groups: [String]
   minQuantity: Int
 }
@@ -121,11 +139,11 @@ type RecipeItem
   @model
   @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
-  recipe: Recipe @belongsTo
-  recipeId: ID!
+  recipes: [Recipe] @manyToMany(relationName: "RecipeRecipeItem")
   inventoryItem: InventoryItem @belongsTo
   inventoryItemId: ID
   quantityUsed: Float
+  prepList: [PrepList] @manyToMany(relationName: "PrepListRecipeItem")
   wasteGenerated: Float
   groups: [String]
 }

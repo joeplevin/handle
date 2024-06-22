@@ -99,7 +99,7 @@ const InvoiceReviewSupplier = ({
 
   // Send Supplier to Review Screen
 
-  console.log('supplier: ', supplier);
+  console.log('supplier on review screen NEW: ', supplier);
   if (typeof supplier['address'] === 'object' && supplier['address'] !== null) {
     supplier[
       'address'

@@ -16,11 +16,11 @@ export const onCreateSupplier = /* GraphQL */ `
         nextToken
         __typename
       }
-      invoices {
+      inventoryItems {
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      invoices {
         nextToken
         __typename
       }
@@ -47,11 +47,11 @@ export const onUpdateSupplier = /* GraphQL */ `
         nextToken
         __typename
       }
-      invoices {
+      inventoryItems {
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      invoices {
         nextToken
         __typename
       }
@@ -78,11 +78,11 @@ export const onDeleteSupplier = /* GraphQL */ `
         nextToken
         __typename
       }
-      invoices {
+      inventoryItems {
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      invoices {
         nextToken
         __typename
       }
@@ -231,7 +231,11 @@ export const onCreateInventoryItem = /* GraphQL */ `
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      suppliers {
+        nextToken
+        __typename
+      }
+      orderList {
         nextToken
         __typename
       }
@@ -282,7 +286,11 @@ export const onUpdateInventoryItem = /* GraphQL */ `
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      suppliers {
+        nextToken
+        __typename
+      }
+      orderList {
         nextToken
         __typename
       }
@@ -333,7 +341,11 @@ export const onDeleteInventoryItem = /* GraphQL */ `
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      suppliers {
+        nextToken
+        __typename
+      }
+      orderList {
         nextToken
         __typename
       }
@@ -355,148 +367,58 @@ export const onDeleteInventoryItem = /* GraphQL */ `
     }
   }
 `;
-export const onCreateSupplierInventoryLink = /* GraphQL */ `
-  subscription OnCreateSupplierInventoryLink(
-    $filter: ModelSubscriptionSupplierInventoryLinkFilterInput
+export const onCreateOrderList = /* GraphQL */ `
+  subscription OnCreateOrderList(
+    $filter: ModelSubscriptionOrderListFilterInput
     $owner: String
   ) {
-    onCreateSupplierInventoryLink(filter: $filter, owner: $owner) {
+    onCreateOrderList(filter: $filter, owner: $owner) {
       id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
+      name
       inventoryItem {
-        id
-        name
-        weight
-        units
-        averagePrice
-        catalogItemId
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        catalogItemInventoryItemsId
-        owner
+        nextToken
         __typename
       }
-      inventoryItemId
-      pricePerUnit
-      lastDeliveryDate
-      deliveryWeight
-      groups
       createdAt
       updatedAt
-      supplierSupplierInventoryLinksId
-      inventoryItemSupplierInventoryLinksId
       owner
       __typename
     }
   }
 `;
-export const onUpdateSupplierInventoryLink = /* GraphQL */ `
-  subscription OnUpdateSupplierInventoryLink(
-    $filter: ModelSubscriptionSupplierInventoryLinkFilterInput
+export const onUpdateOrderList = /* GraphQL */ `
+  subscription OnUpdateOrderList(
+    $filter: ModelSubscriptionOrderListFilterInput
     $owner: String
   ) {
-    onUpdateSupplierInventoryLink(filter: $filter, owner: $owner) {
+    onUpdateOrderList(filter: $filter, owner: $owner) {
       id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
+      name
       inventoryItem {
-        id
-        name
-        weight
-        units
-        averagePrice
-        catalogItemId
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        catalogItemInventoryItemsId
-        owner
+        nextToken
         __typename
       }
-      inventoryItemId
-      pricePerUnit
-      lastDeliveryDate
-      deliveryWeight
-      groups
       createdAt
       updatedAt
-      supplierSupplierInventoryLinksId
-      inventoryItemSupplierInventoryLinksId
       owner
       __typename
     }
   }
 `;
-export const onDeleteSupplierInventoryLink = /* GraphQL */ `
-  subscription OnDeleteSupplierInventoryLink(
-    $filter: ModelSubscriptionSupplierInventoryLinkFilterInput
+export const onDeleteOrderList = /* GraphQL */ `
+  subscription OnDeleteOrderList(
+    $filter: ModelSubscriptionOrderListFilterInput
     $owner: String
   ) {
-    onDeleteSupplierInventoryLink(filter: $filter, owner: $owner) {
+    onDeleteOrderList(filter: $filter, owner: $owner) {
       id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
+      name
       inventoryItem {
-        id
-        name
-        weight
-        units
-        averagePrice
-        catalogItemId
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        catalogItemInventoryItemsId
-        owner
+        nextToken
         __typename
       }
-      inventoryItemId
-      pricePerUnit
-      lastDeliveryDate
-      deliveryWeight
-      groups
       createdAt
       updatedAt
-      supplierSupplierInventoryLinksId
-      inventoryItemSupplierInventoryLinksId
       owner
       __typename
     }
@@ -907,6 +829,144 @@ export const onDeleteRejectionReason = /* GraphQL */ `
     }
   }
 `;
+export const onCreateMenuItem = /* GraphQL */ `
+  subscription OnCreateMenuItem(
+    $filter: ModelSubscriptionMenuItemFilterInput
+    $owner: String
+  ) {
+    onCreateMenuItem(filter: $filter, owner: $owner) {
+      id
+      name
+      description
+      price
+      recipes {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateMenuItem = /* GraphQL */ `
+  subscription OnUpdateMenuItem(
+    $filter: ModelSubscriptionMenuItemFilterInput
+    $owner: String
+  ) {
+    onUpdateMenuItem(filter: $filter, owner: $owner) {
+      id
+      name
+      description
+      price
+      recipes {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteMenuItem = /* GraphQL */ `
+  subscription OnDeleteMenuItem(
+    $filter: ModelSubscriptionMenuItemFilterInput
+    $owner: String
+  ) {
+    onDeleteMenuItem(filter: $filter, owner: $owner) {
+      id
+      name
+      description
+      price
+      recipes {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onCreatePrepList = /* GraphQL */ `
+  subscription OnCreatePrepList(
+    $filter: ModelSubscriptionPrepListFilterInput
+    $owner: String
+  ) {
+    onCreatePrepList(filter: $filter, owner: $owner) {
+      id
+      name
+      recipes {
+        nextToken
+        __typename
+      }
+      recipeItems {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdatePrepList = /* GraphQL */ `
+  subscription OnUpdatePrepList(
+    $filter: ModelSubscriptionPrepListFilterInput
+    $owner: String
+  ) {
+    onUpdatePrepList(filter: $filter, owner: $owner) {
+      id
+      name
+      recipes {
+        nextToken
+        __typename
+      }
+      recipeItems {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeletePrepList = /* GraphQL */ `
+  subscription OnDeletePrepList(
+    $filter: ModelSubscriptionPrepListFilterInput
+    $owner: String
+  ) {
+    onDeletePrepList(filter: $filter, owner: $owner) {
+      id
+      name
+      recipes {
+        nextToken
+        __typename
+      }
+      recipeItems {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
 export const onCreateRecipe = /* GraphQL */ `
   subscription OnCreateRecipe(
     $filter: ModelSubscriptionRecipeFilterInput
@@ -919,6 +979,14 @@ export const onCreateRecipe = /* GraphQL */ `
       preparationTime
       cookingTime
       recipeItems {
+        nextToken
+        __typename
+      }
+      prepList {
+        nextToken
+        __typename
+      }
+      menuItems {
         nextToken
         __typename
       }
@@ -946,6 +1014,14 @@ export const onUpdateRecipe = /* GraphQL */ `
         nextToken
         __typename
       }
+      prepList {
+        nextToken
+        __typename
+      }
+      menuItems {
+        nextToken
+        __typename
+      }
       groups
       minQuantity
       createdAt
@@ -970,6 +1046,14 @@ export const onDeleteRecipe = /* GraphQL */ `
         nextToken
         __typename
       }
+      prepList {
+        nextToken
+        __typename
+      }
+      menuItems {
+        nextToken
+        __typename
+      }
       groups
       minQuantity
       createdAt
@@ -986,20 +1070,10 @@ export const onCreateRecipeItem = /* GraphQL */ `
   ) {
     onCreateRecipeItem(filter: $filter, owner: $owner) {
       id
-      recipe {
-        id
-        name
-        description
-        preparationTime
-        cookingTime
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        owner
+      recipes {
+        nextToken
         __typename
       }
-      recipeId
       inventoryItem {
         id
         name
@@ -1017,12 +1091,15 @@ export const onCreateRecipeItem = /* GraphQL */ `
       }
       inventoryItemId
       quantityUsed
+      prepList {
+        nextToken
+        __typename
+      }
       wasteGenerated
       groups
       createdAt
       updatedAt
       inventoryItemUsedInRecipesId
-      recipeRecipeItemsId
       owner
       __typename
     }
@@ -1035,20 +1112,10 @@ export const onUpdateRecipeItem = /* GraphQL */ `
   ) {
     onUpdateRecipeItem(filter: $filter, owner: $owner) {
       id
-      recipe {
-        id
-        name
-        description
-        preparationTime
-        cookingTime
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        owner
+      recipes {
+        nextToken
         __typename
       }
-      recipeId
       inventoryItem {
         id
         name
@@ -1066,12 +1133,15 @@ export const onUpdateRecipeItem = /* GraphQL */ `
       }
       inventoryItemId
       quantityUsed
+      prepList {
+        nextToken
+        __typename
+      }
       wasteGenerated
       groups
       createdAt
       updatedAt
       inventoryItemUsedInRecipesId
-      recipeRecipeItemsId
       owner
       __typename
     }
@@ -1084,20 +1154,10 @@ export const onDeleteRecipeItem = /* GraphQL */ `
   ) {
     onDeleteRecipeItem(filter: $filter, owner: $owner) {
       id
-      recipe {
-        id
-        name
-        description
-        preparationTime
-        cookingTime
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        owner
+      recipes {
+        nextToken
         __typename
       }
-      recipeId
       inventoryItem {
         id
         name
@@ -1115,12 +1175,15 @@ export const onDeleteRecipeItem = /* GraphQL */ `
       }
       inventoryItemId
       quantityUsed
+      prepList {
+        nextToken
+        __typename
+      }
       wasteGenerated
       groups
       createdAt
       updatedAt
       inventoryItemUsedInRecipesId
-      recipeRecipeItemsId
       owner
       __typename
     }
@@ -1226,6 +1289,720 @@ export const onDeleteWasteItem = /* GraphQL */ `
       createdAt
       updatedAt
       inventoryItemWasteId
+      owner
+      __typename
+    }
+  }
+`;
+export const onCreateSupplierInventory = /* GraphQL */ `
+  subscription OnCreateSupplierInventory(
+    $filter: ModelSubscriptionSupplierInventoryFilterInput
+    $owner: String
+  ) {
+    onCreateSupplierInventory(filter: $filter, owner: $owner) {
+      id
+      supplierId
+      inventoryItemId
+      supplier {
+        id
+        name
+        email
+        phone
+        address
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateSupplierInventory = /* GraphQL */ `
+  subscription OnUpdateSupplierInventory(
+    $filter: ModelSubscriptionSupplierInventoryFilterInput
+    $owner: String
+  ) {
+    onUpdateSupplierInventory(filter: $filter, owner: $owner) {
+      id
+      supplierId
+      inventoryItemId
+      supplier {
+        id
+        name
+        email
+        phone
+        address
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteSupplierInventory = /* GraphQL */ `
+  subscription OnDeleteSupplierInventory(
+    $filter: ModelSubscriptionSupplierInventoryFilterInput
+    $owner: String
+  ) {
+    onDeleteSupplierInventory(filter: $filter, owner: $owner) {
+      id
+      supplierId
+      inventoryItemId
+      supplier {
+        id
+        name
+        email
+        phone
+        address
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onCreateInventoryItemOrder = /* GraphQL */ `
+  subscription OnCreateInventoryItemOrder(
+    $filter: ModelSubscriptionInventoryItemOrderFilterInput
+    $owner: String
+  ) {
+    onCreateInventoryItemOrder(filter: $filter, owner: $owner) {
+      id
+      inventoryItemId
+      orderListId
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      orderList {
+        id
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateInventoryItemOrder = /* GraphQL */ `
+  subscription OnUpdateInventoryItemOrder(
+    $filter: ModelSubscriptionInventoryItemOrderFilterInput
+    $owner: String
+  ) {
+    onUpdateInventoryItemOrder(filter: $filter, owner: $owner) {
+      id
+      inventoryItemId
+      orderListId
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      orderList {
+        id
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteInventoryItemOrder = /* GraphQL */ `
+  subscription OnDeleteInventoryItemOrder(
+    $filter: ModelSubscriptionInventoryItemOrderFilterInput
+    $owner: String
+  ) {
+    onDeleteInventoryItemOrder(filter: $filter, owner: $owner) {
+      id
+      inventoryItemId
+      orderListId
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      orderList {
+        id
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onCreateMenuRecipe = /* GraphQL */ `
+  subscription OnCreateMenuRecipe(
+    $filter: ModelSubscriptionMenuRecipeFilterInput
+    $owner: String
+  ) {
+    onCreateMenuRecipe(filter: $filter, owner: $owner) {
+      id
+      menuItemId
+      recipeId
+      menuItem {
+        id
+        name
+        description
+        price
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateMenuRecipe = /* GraphQL */ `
+  subscription OnUpdateMenuRecipe(
+    $filter: ModelSubscriptionMenuRecipeFilterInput
+    $owner: String
+  ) {
+    onUpdateMenuRecipe(filter: $filter, owner: $owner) {
+      id
+      menuItemId
+      recipeId
+      menuItem {
+        id
+        name
+        description
+        price
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteMenuRecipe = /* GraphQL */ `
+  subscription OnDeleteMenuRecipe(
+    $filter: ModelSubscriptionMenuRecipeFilterInput
+    $owner: String
+  ) {
+    onDeleteMenuRecipe(filter: $filter, owner: $owner) {
+      id
+      menuItemId
+      recipeId
+      menuItem {
+        id
+        name
+        description
+        price
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onCreatePrepListRecipe = /* GraphQL */ `
+  subscription OnCreatePrepListRecipe(
+    $filter: ModelSubscriptionPrepListRecipeFilterInput
+    $owner: String
+  ) {
+    onCreatePrepListRecipe(filter: $filter, owner: $owner) {
+      id
+      prepListId
+      recipeId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdatePrepListRecipe = /* GraphQL */ `
+  subscription OnUpdatePrepListRecipe(
+    $filter: ModelSubscriptionPrepListRecipeFilterInput
+    $owner: String
+  ) {
+    onUpdatePrepListRecipe(filter: $filter, owner: $owner) {
+      id
+      prepListId
+      recipeId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeletePrepListRecipe = /* GraphQL */ `
+  subscription OnDeletePrepListRecipe(
+    $filter: ModelSubscriptionPrepListRecipeFilterInput
+    $owner: String
+  ) {
+    onDeletePrepListRecipe(filter: $filter, owner: $owner) {
+      id
+      prepListId
+      recipeId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onCreatePrepListRecipeItem = /* GraphQL */ `
+  subscription OnCreatePrepListRecipeItem(
+    $filter: ModelSubscriptionPrepListRecipeItemFilterInput
+    $owner: String
+  ) {
+    onCreatePrepListRecipeItem(filter: $filter, owner: $owner) {
+      id
+      prepListId
+      recipeItemId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdatePrepListRecipeItem = /* GraphQL */ `
+  subscription OnUpdatePrepListRecipeItem(
+    $filter: ModelSubscriptionPrepListRecipeItemFilterInput
+    $owner: String
+  ) {
+    onUpdatePrepListRecipeItem(filter: $filter, owner: $owner) {
+      id
+      prepListId
+      recipeItemId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeletePrepListRecipeItem = /* GraphQL */ `
+  subscription OnDeletePrepListRecipeItem(
+    $filter: ModelSubscriptionPrepListRecipeItemFilterInput
+    $owner: String
+  ) {
+    onDeletePrepListRecipeItem(filter: $filter, owner: $owner) {
+      id
+      prepListId
+      recipeItemId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onCreateRecipeRecipeItem = /* GraphQL */ `
+  subscription OnCreateRecipeRecipeItem(
+    $filter: ModelSubscriptionRecipeRecipeItemFilterInput
+    $owner: String
+  ) {
+    onCreateRecipeRecipeItem(filter: $filter, owner: $owner) {
+      id
+      recipeId
+      recipeItemId
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onUpdateRecipeRecipeItem = /* GraphQL */ `
+  subscription OnUpdateRecipeRecipeItem(
+    $filter: ModelSubscriptionRecipeRecipeItemFilterInput
+    $owner: String
+  ) {
+    onUpdateRecipeRecipeItem(filter: $filter, owner: $owner) {
+      id
+      recipeId
+      recipeItemId
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const onDeleteRecipeRecipeItem = /* GraphQL */ `
+  subscription OnDeleteRecipeRecipeItem(
+    $filter: ModelSubscriptionRecipeRecipeItemFilterInput
+    $owner: String
+  ) {
+    onDeleteRecipeRecipeItem(filter: $filter, owner: $owner) {
+      id
+      recipeId
+      recipeItemId
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
       owner
       __typename
     }

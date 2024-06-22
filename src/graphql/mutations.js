@@ -16,11 +16,11 @@ export const createSupplier = /* GraphQL */ `
         nextToken
         __typename
       }
-      invoices {
+      inventoryItems {
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      invoices {
         nextToken
         __typename
       }
@@ -47,11 +47,11 @@ export const updateSupplier = /* GraphQL */ `
         nextToken
         __typename
       }
-      invoices {
+      inventoryItems {
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      invoices {
         nextToken
         __typename
       }
@@ -78,11 +78,11 @@ export const deleteSupplier = /* GraphQL */ `
         nextToken
         __typename
       }
-      invoices {
+      inventoryItems {
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      invoices {
         nextToken
         __typename
       }
@@ -231,7 +231,11 @@ export const createInventoryItem = /* GraphQL */ `
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      suppliers {
+        nextToken
+        __typename
+      }
+      orderList {
         nextToken
         __typename
       }
@@ -282,7 +286,11 @@ export const updateInventoryItem = /* GraphQL */ `
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      suppliers {
+        nextToken
+        __typename
+      }
+      orderList {
         nextToken
         __typename
       }
@@ -333,7 +341,11 @@ export const deleteInventoryItem = /* GraphQL */ `
         nextToken
         __typename
       }
-      supplierInventoryLinks {
+      suppliers {
+        nextToken
+        __typename
+      }
+      orderList {
         nextToken
         __typename
       }
@@ -355,148 +367,58 @@ export const deleteInventoryItem = /* GraphQL */ `
     }
   }
 `;
-export const createSupplierInventoryLink = /* GraphQL */ `
-  mutation CreateSupplierInventoryLink(
-    $input: CreateSupplierInventoryLinkInput!
-    $condition: ModelSupplierInventoryLinkConditionInput
+export const createOrderList = /* GraphQL */ `
+  mutation CreateOrderList(
+    $input: CreateOrderListInput!
+    $condition: ModelOrderListConditionInput
   ) {
-    createSupplierInventoryLink(input: $input, condition: $condition) {
+    createOrderList(input: $input, condition: $condition) {
       id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
+      name
       inventoryItem {
-        id
-        name
-        weight
-        units
-        averagePrice
-        catalogItemId
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        catalogItemInventoryItemsId
-        owner
+        nextToken
         __typename
       }
-      inventoryItemId
-      pricePerUnit
-      lastDeliveryDate
-      deliveryWeight
-      groups
       createdAt
       updatedAt
-      supplierSupplierInventoryLinksId
-      inventoryItemSupplierInventoryLinksId
       owner
       __typename
     }
   }
 `;
-export const updateSupplierInventoryLink = /* GraphQL */ `
-  mutation UpdateSupplierInventoryLink(
-    $input: UpdateSupplierInventoryLinkInput!
-    $condition: ModelSupplierInventoryLinkConditionInput
+export const updateOrderList = /* GraphQL */ `
+  mutation UpdateOrderList(
+    $input: UpdateOrderListInput!
+    $condition: ModelOrderListConditionInput
   ) {
-    updateSupplierInventoryLink(input: $input, condition: $condition) {
+    updateOrderList(input: $input, condition: $condition) {
       id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
+      name
       inventoryItem {
-        id
-        name
-        weight
-        units
-        averagePrice
-        catalogItemId
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        catalogItemInventoryItemsId
-        owner
+        nextToken
         __typename
       }
-      inventoryItemId
-      pricePerUnit
-      lastDeliveryDate
-      deliveryWeight
-      groups
       createdAt
       updatedAt
-      supplierSupplierInventoryLinksId
-      inventoryItemSupplierInventoryLinksId
       owner
       __typename
     }
   }
 `;
-export const deleteSupplierInventoryLink = /* GraphQL */ `
-  mutation DeleteSupplierInventoryLink(
-    $input: DeleteSupplierInventoryLinkInput!
-    $condition: ModelSupplierInventoryLinkConditionInput
+export const deleteOrderList = /* GraphQL */ `
+  mutation DeleteOrderList(
+    $input: DeleteOrderListInput!
+    $condition: ModelOrderListConditionInput
   ) {
-    deleteSupplierInventoryLink(input: $input, condition: $condition) {
+    deleteOrderList(input: $input, condition: $condition) {
       id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
+      name
       inventoryItem {
-        id
-        name
-        weight
-        units
-        averagePrice
-        catalogItemId
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        catalogItemInventoryItemsId
-        owner
+        nextToken
         __typename
       }
-      inventoryItemId
-      pricePerUnit
-      lastDeliveryDate
-      deliveryWeight
-      groups
       createdAt
       updatedAt
-      supplierSupplierInventoryLinksId
-      inventoryItemSupplierInventoryLinksId
       owner
       __typename
     }
@@ -907,6 +829,144 @@ export const deleteRejectionReason = /* GraphQL */ `
     }
   }
 `;
+export const createMenuItem = /* GraphQL */ `
+  mutation CreateMenuItem(
+    $input: CreateMenuItemInput!
+    $condition: ModelMenuItemConditionInput
+  ) {
+    createMenuItem(input: $input, condition: $condition) {
+      id
+      name
+      description
+      price
+      recipes {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updateMenuItem = /* GraphQL */ `
+  mutation UpdateMenuItem(
+    $input: UpdateMenuItemInput!
+    $condition: ModelMenuItemConditionInput
+  ) {
+    updateMenuItem(input: $input, condition: $condition) {
+      id
+      name
+      description
+      price
+      recipes {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteMenuItem = /* GraphQL */ `
+  mutation DeleteMenuItem(
+    $input: DeleteMenuItemInput!
+    $condition: ModelMenuItemConditionInput
+  ) {
+    deleteMenuItem(input: $input, condition: $condition) {
+      id
+      name
+      description
+      price
+      recipes {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const createPrepList = /* GraphQL */ `
+  mutation CreatePrepList(
+    $input: CreatePrepListInput!
+    $condition: ModelPrepListConditionInput
+  ) {
+    createPrepList(input: $input, condition: $condition) {
+      id
+      name
+      recipes {
+        nextToken
+        __typename
+      }
+      recipeItems {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updatePrepList = /* GraphQL */ `
+  mutation UpdatePrepList(
+    $input: UpdatePrepListInput!
+    $condition: ModelPrepListConditionInput
+  ) {
+    updatePrepList(input: $input, condition: $condition) {
+      id
+      name
+      recipes {
+        nextToken
+        __typename
+      }
+      recipeItems {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deletePrepList = /* GraphQL */ `
+  mutation DeletePrepList(
+    $input: DeletePrepListInput!
+    $condition: ModelPrepListConditionInput
+  ) {
+    deletePrepList(input: $input, condition: $condition) {
+      id
+      name
+      recipes {
+        nextToken
+        __typename
+      }
+      recipeItems {
+        nextToken
+        __typename
+      }
+      groups
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
 export const createRecipe = /* GraphQL */ `
   mutation CreateRecipe(
     $input: CreateRecipeInput!
@@ -919,6 +979,14 @@ export const createRecipe = /* GraphQL */ `
       preparationTime
       cookingTime
       recipeItems {
+        nextToken
+        __typename
+      }
+      prepList {
+        nextToken
+        __typename
+      }
+      menuItems {
         nextToken
         __typename
       }
@@ -946,6 +1014,14 @@ export const updateRecipe = /* GraphQL */ `
         nextToken
         __typename
       }
+      prepList {
+        nextToken
+        __typename
+      }
+      menuItems {
+        nextToken
+        __typename
+      }
       groups
       minQuantity
       createdAt
@@ -970,6 +1046,14 @@ export const deleteRecipe = /* GraphQL */ `
         nextToken
         __typename
       }
+      prepList {
+        nextToken
+        __typename
+      }
+      menuItems {
+        nextToken
+        __typename
+      }
       groups
       minQuantity
       createdAt
@@ -986,20 +1070,10 @@ export const createRecipeItem = /* GraphQL */ `
   ) {
     createRecipeItem(input: $input, condition: $condition) {
       id
-      recipe {
-        id
-        name
-        description
-        preparationTime
-        cookingTime
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        owner
+      recipes {
+        nextToken
         __typename
       }
-      recipeId
       inventoryItem {
         id
         name
@@ -1017,12 +1091,15 @@ export const createRecipeItem = /* GraphQL */ `
       }
       inventoryItemId
       quantityUsed
+      prepList {
+        nextToken
+        __typename
+      }
       wasteGenerated
       groups
       createdAt
       updatedAt
       inventoryItemUsedInRecipesId
-      recipeRecipeItemsId
       owner
       __typename
     }
@@ -1035,20 +1112,10 @@ export const updateRecipeItem = /* GraphQL */ `
   ) {
     updateRecipeItem(input: $input, condition: $condition) {
       id
-      recipe {
-        id
-        name
-        description
-        preparationTime
-        cookingTime
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        owner
+      recipes {
+        nextToken
         __typename
       }
-      recipeId
       inventoryItem {
         id
         name
@@ -1066,12 +1133,15 @@ export const updateRecipeItem = /* GraphQL */ `
       }
       inventoryItemId
       quantityUsed
+      prepList {
+        nextToken
+        __typename
+      }
       wasteGenerated
       groups
       createdAt
       updatedAt
       inventoryItemUsedInRecipesId
-      recipeRecipeItemsId
       owner
       __typename
     }
@@ -1084,20 +1154,10 @@ export const deleteRecipeItem = /* GraphQL */ `
   ) {
     deleteRecipeItem(input: $input, condition: $condition) {
       id
-      recipe {
-        id
-        name
-        description
-        preparationTime
-        cookingTime
-        groups
-        minQuantity
-        createdAt
-        updatedAt
-        owner
+      recipes {
+        nextToken
         __typename
       }
-      recipeId
       inventoryItem {
         id
         name
@@ -1115,12 +1175,15 @@ export const deleteRecipeItem = /* GraphQL */ `
       }
       inventoryItemId
       quantityUsed
+      prepList {
+        nextToken
+        __typename
+      }
       wasteGenerated
       groups
       createdAt
       updatedAt
       inventoryItemUsedInRecipesId
-      recipeRecipeItemsId
       owner
       __typename
     }
@@ -1226,6 +1289,720 @@ export const deleteWasteItem = /* GraphQL */ `
       createdAt
       updatedAt
       inventoryItemWasteId
+      owner
+      __typename
+    }
+  }
+`;
+export const createSupplierInventory = /* GraphQL */ `
+  mutation CreateSupplierInventory(
+    $input: CreateSupplierInventoryInput!
+    $condition: ModelSupplierInventoryConditionInput
+  ) {
+    createSupplierInventory(input: $input, condition: $condition) {
+      id
+      supplierId
+      inventoryItemId
+      supplier {
+        id
+        name
+        email
+        phone
+        address
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updateSupplierInventory = /* GraphQL */ `
+  mutation UpdateSupplierInventory(
+    $input: UpdateSupplierInventoryInput!
+    $condition: ModelSupplierInventoryConditionInput
+  ) {
+    updateSupplierInventory(input: $input, condition: $condition) {
+      id
+      supplierId
+      inventoryItemId
+      supplier {
+        id
+        name
+        email
+        phone
+        address
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteSupplierInventory = /* GraphQL */ `
+  mutation DeleteSupplierInventory(
+    $input: DeleteSupplierInventoryInput!
+    $condition: ModelSupplierInventoryConditionInput
+  ) {
+    deleteSupplierInventory(input: $input, condition: $condition) {
+      id
+      supplierId
+      inventoryItemId
+      supplier {
+        id
+        name
+        email
+        phone
+        address
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const createInventoryItemOrder = /* GraphQL */ `
+  mutation CreateInventoryItemOrder(
+    $input: CreateInventoryItemOrderInput!
+    $condition: ModelInventoryItemOrderConditionInput
+  ) {
+    createInventoryItemOrder(input: $input, condition: $condition) {
+      id
+      inventoryItemId
+      orderListId
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      orderList {
+        id
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updateInventoryItemOrder = /* GraphQL */ `
+  mutation UpdateInventoryItemOrder(
+    $input: UpdateInventoryItemOrderInput!
+    $condition: ModelInventoryItemOrderConditionInput
+  ) {
+    updateInventoryItemOrder(input: $input, condition: $condition) {
+      id
+      inventoryItemId
+      orderListId
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      orderList {
+        id
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteInventoryItemOrder = /* GraphQL */ `
+  mutation DeleteInventoryItemOrder(
+    $input: DeleteInventoryItemOrderInput!
+    $condition: ModelInventoryItemOrderConditionInput
+  ) {
+    deleteInventoryItemOrder(input: $input, condition: $condition) {
+      id
+      inventoryItemId
+      orderListId
+      inventoryItem {
+        id
+        name
+        weight
+        units
+        averagePrice
+        catalogItemId
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        catalogItemInventoryItemsId
+        owner
+        __typename
+      }
+      orderList {
+        id
+        name
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const createMenuRecipe = /* GraphQL */ `
+  mutation CreateMenuRecipe(
+    $input: CreateMenuRecipeInput!
+    $condition: ModelMenuRecipeConditionInput
+  ) {
+    createMenuRecipe(input: $input, condition: $condition) {
+      id
+      menuItemId
+      recipeId
+      menuItem {
+        id
+        name
+        description
+        price
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updateMenuRecipe = /* GraphQL */ `
+  mutation UpdateMenuRecipe(
+    $input: UpdateMenuRecipeInput!
+    $condition: ModelMenuRecipeConditionInput
+  ) {
+    updateMenuRecipe(input: $input, condition: $condition) {
+      id
+      menuItemId
+      recipeId
+      menuItem {
+        id
+        name
+        description
+        price
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteMenuRecipe = /* GraphQL */ `
+  mutation DeleteMenuRecipe(
+    $input: DeleteMenuRecipeInput!
+    $condition: ModelMenuRecipeConditionInput
+  ) {
+    deleteMenuRecipe(input: $input, condition: $condition) {
+      id
+      menuItemId
+      recipeId
+      menuItem {
+        id
+        name
+        description
+        price
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const createPrepListRecipe = /* GraphQL */ `
+  mutation CreatePrepListRecipe(
+    $input: CreatePrepListRecipeInput!
+    $condition: ModelPrepListRecipeConditionInput
+  ) {
+    createPrepListRecipe(input: $input, condition: $condition) {
+      id
+      prepListId
+      recipeId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updatePrepListRecipe = /* GraphQL */ `
+  mutation UpdatePrepListRecipe(
+    $input: UpdatePrepListRecipeInput!
+    $condition: ModelPrepListRecipeConditionInput
+  ) {
+    updatePrepListRecipe(input: $input, condition: $condition) {
+      id
+      prepListId
+      recipeId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deletePrepListRecipe = /* GraphQL */ `
+  mutation DeletePrepListRecipe(
+    $input: DeletePrepListRecipeInput!
+    $condition: ModelPrepListRecipeConditionInput
+  ) {
+    deletePrepListRecipe(input: $input, condition: $condition) {
+      id
+      prepListId
+      recipeId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const createPrepListRecipeItem = /* GraphQL */ `
+  mutation CreatePrepListRecipeItem(
+    $input: CreatePrepListRecipeItemInput!
+    $condition: ModelPrepListRecipeItemConditionInput
+  ) {
+    createPrepListRecipeItem(input: $input, condition: $condition) {
+      id
+      prepListId
+      recipeItemId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updatePrepListRecipeItem = /* GraphQL */ `
+  mutation UpdatePrepListRecipeItem(
+    $input: UpdatePrepListRecipeItemInput!
+    $condition: ModelPrepListRecipeItemConditionInput
+  ) {
+    updatePrepListRecipeItem(input: $input, condition: $condition) {
+      id
+      prepListId
+      recipeItemId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deletePrepListRecipeItem = /* GraphQL */ `
+  mutation DeletePrepListRecipeItem(
+    $input: DeletePrepListRecipeItemInput!
+    $condition: ModelPrepListRecipeItemConditionInput
+  ) {
+    deletePrepListRecipeItem(input: $input, condition: $condition) {
+      id
+      prepListId
+      recipeItemId
+      prepList {
+        id
+        name
+        groups
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const createRecipeRecipeItem = /* GraphQL */ `
+  mutation CreateRecipeRecipeItem(
+    $input: CreateRecipeRecipeItemInput!
+    $condition: ModelRecipeRecipeItemConditionInput
+  ) {
+    createRecipeRecipeItem(input: $input, condition: $condition) {
+      id
+      recipeId
+      recipeItemId
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const updateRecipeRecipeItem = /* GraphQL */ `
+  mutation UpdateRecipeRecipeItem(
+    $input: UpdateRecipeRecipeItemInput!
+    $condition: ModelRecipeRecipeItemConditionInput
+  ) {
+    updateRecipeRecipeItem(input: $input, condition: $condition) {
+      id
+      recipeId
+      recipeItemId
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
+      owner
+      __typename
+    }
+  }
+`;
+export const deleteRecipeRecipeItem = /* GraphQL */ `
+  mutation DeleteRecipeRecipeItem(
+    $input: DeleteRecipeRecipeItemInput!
+    $condition: ModelRecipeRecipeItemConditionInput
+  ) {
+    deleteRecipeRecipeItem(input: $input, condition: $condition) {
+      id
+      recipeId
+      recipeItemId
+      recipe {
+        id
+        name
+        description
+        preparationTime
+        cookingTime
+        groups
+        minQuantity
+        createdAt
+        updatedAt
+        owner
+        __typename
+      }
+      recipeItem {
+        id
+        inventoryItemId
+        quantityUsed
+        wasteGenerated
+        groups
+        createdAt
+        updatedAt
+        inventoryItemUsedInRecipesId
+        owner
+        __typename
+      }
+      createdAt
+      updatedAt
       owner
       __typename
     }

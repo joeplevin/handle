@@ -24,7 +24,7 @@ const InventoryButtonBlock = ({navigation}) => {
               margin: 10,
             }}
           />
-          <Text>Create</Text>
+          <Text style={{fontWeight: 'bold'}}>Create</Text>
         </Pressable>
       </View>
       <View>
@@ -48,7 +48,7 @@ const InventoryButtonBlock = ({navigation}) => {
               margin: 10,
             }}
           />
-          <Text>Search</Text>
+          <Text style={{fontWeight: 'bold'}}>Search</Text>
         </Pressable>
       </View>
       <View>
@@ -72,7 +72,7 @@ const InventoryButtonBlock = ({navigation}) => {
               margin: 10,
             }}
           />
-          <Text>Scan</Text>
+          <Text style={{fontWeight: 'bold'}}>Scan</Text>
         </Pressable>
       </View>
     </View>
