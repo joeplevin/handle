@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import {Alert, Modal, Pressable, Text, View} from 'react-native';
+import {Alert, Modal, Pressable, Switch, Text, View} from 'react-native';
 import {useState} from 'react';
 import {useForm, Controller, set} from 'react-hook-form';
 import {TextInput} from 'react-native-gesture-handler';
@@ -10,24 +10,87 @@ import {updateInvoiceItem} from '../../src/graphql/mutations';
 import {generateClient} from 'aws-amplify/api';
 import OpenAI from 'openai';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
+import {useInvoice} from '../../amplify/context/InvoiceContext';
 
 const client = generateClient();
 const openai = new OpenAI({
   apiKey: 'sk-proj-IkqjrAAzp6Z01kQuXD1xT3BlbkFJH3DaiJlGfbwoTJBkjCgf',
 });
 
-const InvoiceReviewItemModal = ({route, navigation}) => {
+const InvoiceReviewItemModal = ({
+  visible,
+  setVisible,
+  itemReviewed,
+  setItemReviewed,
+}) => {
+  const {
+    parseInvoiceItemData,
+    setParseInvoiceItemData,
+    parseInvoiceData,
+    setParseInvoiceData,
+    parseInvoiceSupplierData,
+    setParseInvoiceSupplierData,
+    userPoolId,
+    invoiceUrl,
+    invoiceName,
+  } = useInvoice();
   // Initialise from route params
-  const invoiceItems = route.params['invoiceItems'];
-  const itemCount = route.params['itemCount'];
-  const userPoolId = route.params['userPoolId'];
-  const invoice = route.params['invoice'];
+  const [invoiceItems, setInvoiceItems] = useState([]);
+
+  useEffect(() => {
+    if (parseInvoiceItemData) {
+      setInvoiceItems(parseInvoiceItemData);
+    }
+  }, [parseInvoiceItemData]);
+
+  const [itemCount, setItemCount] = useState(0);
+  const [invoice, setInvoice] = useState(parseInvoiceData);
 
   let invoiceItem = invoiceItems[itemCount];
   console.log('Invoice Item: ', invoiceItem);
 
   // Set up state for accepted and rejected items
-  const [invoiceItemData, setInvoiceItemData] = useState({});
+  const [invoiceItemData, setInvoiceItemData] = useState({
+    invoiceId: '',
+    inventoryItemId: '',
+    name: '',
+    totalQuantity: 0,
+    acceptedQuantity: 0,
+    weight: 0.0,
+    units: 0,
+    pricePerUnit: 0.0,
+    expiryDate: new Date(),
+    accepted: true,
+    groups: [''],
+    inventoryItemInvoiceItemsId: '',
+    invoiceItemsId: '',
+  });
+
+  const [rejectionReasons, setRejectionReasons] = useState([
+    {
+      invoiceItemId: '',
+      reason: '',
+      groups: [''],
+      invoiceItemRejectionReasonsId: '',
+    },
+  ]);
+
+  const [inventoryItem, setInventoryItem] = useState({
+    name: '',
+    weight: 0.0,
+    units: 0,
+    averagePrice: 0.0,
+    groups: [''],
+    minQuantity: 0,
+  });
+
+  const [supplierInventory, setSupplierInventory] = useState({
+    supplierId: '',
+    inventoryItemId: '',
+    supplier: {},
+    inventoryItem: {},
+  });
+
   const [reviewed, setReviewed] = useState(false);
   const [accepted, setAccepted] = useState(false);
 
@@ -327,13 +390,9 @@ const InvoiceReviewItemModal = ({route, navigation}) => {
   if (itemCount == invoiceItems.length) {
     invoiceItem = {item_name: '', quantity: 0, weight: '', price_per_unit: 0};
   }
-  const [acceptedItems, setAcceptedItems] = useState(
-    route.params['acceptedItems'],
-  );
+  const [acceptedItems, setAcceptedItems] = useState([]);
   const [rejected, setRejected] = useState(false);
-  const [rejectedItems, setRejectedItems] = useState(
-    route.params['rejectedItems'],
-  );
+  const [rejectedItems, setRejectedItems] = useState([]);
   const [complete, setComplete] = useState(false);
 
   //Set up form
@@ -343,19 +402,22 @@ const InvoiceReviewItemModal = ({route, navigation}) => {
       quantity: invoiceItem['quantity'].toString(),
       weight: invoiceItem['weight'],
       price_per_unit: invoiceItem['price_per_unit'].toString(),
+      accepted: true,
+      rejection_reason: '',
+      rejection_quantity: invoiceItem['quantity'].toString(),
     },
   });
   // Set up rejection form
-  const {
-    reset: rejectReset,
-    handleSubmit: handleRejectSubmit,
-    control: rejectControl,
-  } = useForm({
-    defaultValues: {
-      rejection_reason: '',
-      rejection_quantity: '',
-    },
-  });
+  // const {
+  //   reset: rejectReset,
+  //   handleSubmit: handleRejectSubmit,
+  //   control: rejectControl,
+  // } = useForm({
+  //   defaultValues: {
+  //     rejection_reason: '',
+  //     rejection_quantity: '',
+  //   },
+  // });
   // Reset form when invoiceItem changes
   useEffect(() => {
     setReviewed(false);
@@ -366,10 +428,9 @@ const InvoiceReviewItemModal = ({route, navigation}) => {
         quantity: invoiceItem['quantity'].toString(),
         weight: invoiceItem['weight'],
         price_per_unit: invoiceItem['price_per_unit'].toString(),
-      });
-      rejectReset({
+        accepted: true,
         rejection_reason: '',
-        rejection_quantity: '',
+        rejection_quantity: invoiceItem['quantity'].toString(),
       });
     }
     console.log('accepted items: ', acceptedItems);
@@ -380,15 +441,34 @@ const InvoiceReviewItemModal = ({route, navigation}) => {
 
   const onSubmit = async data => {
     console.log('confirmed item data: ', data);
-    setInvoiceItemData(data);
-    try {
-      await createNewInvoiceItem(data);
-      console.log('created invoice item: ', createdInvoiceItem);
-      console.log('invoice item data: ', invoiceItemData);
-    } catch (error) {
-      console.log('Error: ', error);
-      Alert.alert('Error creating invoice item. Please try again.');
+    if (data['accepted'] === false) {
     }
+    setInvoiceItemData(prevState => {
+      return {
+        ...prevState,
+        invoiceId: parseInvoiceData['id'],
+        name: data['item_name'],
+        totalQuantity: 0,
+        acceptedQuantity: 0,
+        weight: 0.0,
+        units: 0,
+        pricePerUnit: 0.0,
+        expiryDate: new Date() + 7,
+        accepted: data['accepted'],
+        groups: userPoolId.toString(),
+        inventoryItemInvoiceItemsId: '',
+        invoiceItemsId: '',
+      };
+    });
+    // setInvoiceItemData(data);
+    // try {
+    //   await createNewInvoiceItem(data);
+    //   console.log('created invoice item: ', createdInvoiceItem);
+    //   console.log('invoice item data: ', invoiceItemData);
+    // } catch (error) {
+    //   console.log('Error: ', error);
+    //   Alert.alert('Error saving details. Please try again.');
+    // }
     setReviewed(true);
   };
 
@@ -458,18 +538,22 @@ const InvoiceReviewItemModal = ({route, navigation}) => {
   };
 
   const onPressNext = () => {
-    navigation.navigate('InvoiceReviewItemScreen', {
-      itemCount: itemCount + 1,
-      invoiceItems: invoiceItems,
-      rejectedItems: rejectedItems,
-      acceptedItems: acceptedItems,
-    });
+    // navigation.navigate('InvoiceReviewItemScreen', {
+    //   itemCount: itemCount + 1,
+    //   invoiceItems: invoiceItems,
+    //   rejectedItems: rejectedItems,
+    //   acceptedItems: acceptedItems,
+    // });
+    setItemCount(itemCount + 1);
   };
 
   const createNewInvoiceItem = async data => {
     console.log('Creating invoice item...');
     console.log('Invoice Item Data: ', data);
     console.log('invoice: ', invoice);
+    if (data['accepted'] === false) {
+      data['rejection_quantity'] = '0';
+    }
     try {
       const newInvoiceItem = await client.graphql({
         query: createInvoiceItem,
@@ -639,191 +723,466 @@ const InvoiceReviewItemModal = ({route, navigation}) => {
     setRejected(false);
   };
 
-  return itemCount == invoiceItems.length ? (
-    <View>
-      <Text>End of Invoice</Text>
-      <Pressable
-        onPress={() => {
-          console.log('Accepted Items on redirect: ', acceptedItems);
-          console.log('Rejected Items on redirect: ', rejectedItems);
-          navigation.navigate('InvoiceReviewScreen', {
-            acceptedItems: acceptedItems,
-            rejectedItems: rejectedItems,
-            invoiceItems: invoiceItems,
-          });
+  // List of inventory items
+
+  const Item = ({item, backgroundColor, textColor}) => (
+    <View style={styles.item} key={item['id']}>
+      <Text style={{fontSize: 15, color: '#fff', alignSelf: 'center'}}>
+        {item['name']}
+      </Text>
+      <Text style={{fontSize: 10, alignSelf: 'center', color: '#fff'}}>
+        {item['']}
+      </Text>
+      <Text style={{fontSize: 10, alignSelf: 'center', color: '#fff'}}>
+        {item['phone']}
+      </Text>
+      <Text style={{fontSize: 10, alignSelf: 'center', color: '#fff'}}>
+        {item['address']}
+      </Text>
+      <View
+        style={{
+          flexDirection: 'row',
+          justifyContent: 'center',
         }}>
-        <Text>Review</Text>
-      </Pressable>
+        {selectedSupplier !== item && (
+          <Pressable
+            onPress={() => {
+              setSelectedSupplier(item);
+              setParseInvoiceSupplierData(item);
+            }}
+            style={{
+              backgroundColor: '#b0e298',
+              marginTop: 20,
+              width: 100,
+              alignItems: 'center',
+              padding: 10,
+              borderRadius: 30,
+            }}>
+            <Text style={{color: '#2b2d42', fontWeight: 'bold'}}>SELECT</Text>
+          </Pressable>
+        )}
+        {selectedSupplier == item && (
+          <Pressable
+            onPress={() => setSelectedSupplier(null)}
+            inline
+            style={{
+              backgroundColor: '#8D99AE',
+              marginTop: 20,
+              width: 100,
+              alignItems: 'center',
+              padding: 10,
+              borderRadius: 30,
+            }}>
+            <Text style={{color: '#2b2d42', fontWeight: 'bold'}}>REMOVE</Text>
+          </Pressable>
+        )}
+      </View>
     </View>
-  ) : (
-    <View>
-      <View style={{marginBottom: 5, marginLeft: 20}}>
-        <Text style={{fontWeight: 'bold'}}>INVOICE ITEM #{itemCount + 1}</Text>
+  );
+  // Conditional rendering of selected supplier
+  const renderItem = ({item}) => {
+    const backgroundColor = item === selectedSupplier ? '#fff' : '#f1f1f1';
+    const color = '#2b2d42';
+
+    return (
+      <Item item={item} backgroundColor={backgroundColor} textColor={color} />
+    );
+  };
+
+  return (
+    <Modal visible={visible}>
+      <View style={{flexDirection: 'row', justifyContent: 'space-between'}}>
+        <Pressable
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            margin: 10,
+          }}>
+          <MIcon
+            name="close"
+            size={20}
+            style={{alignSelf: 'flex-start'}}
+            onPress={() => {
+              setItemCount(0);
+              setItemReviewed(false);
+              setAccepted(false);
+              setRejected(false);
+              setComplete(false);
+              setVisible();
+            }}
+          />
+          <Text>Close</Text>
+        </Pressable>
+        <Pressable
+          style={{
+            flexDirection: 'row',
+            justifyContent: 'center',
+            alignItems: 'center',
+            alignContent: 'center',
+            margin: 10,
+          }}>
+          <Text style={{alignSelf: 'center'}}>Next</Text>
+          <MIcon
+            name="arrow-forward-ios"
+            style={{alignSelf: 'center'}}
+            size={19}
+            onPress={onPressNext}
+          />
+        </Pressable>
       </View>
-      <View
-        style={{
-          paddingBottom: 20,
-          borderTopWidth: 1,
-          borderColor: '#b8b8b8',
-          backgroundColor: '#fff',
-        }}>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '95%',
-            alignSelf: 'flex-end',
-            borderBottomWidth: 1,
-            borderColor: '#b8b8b8',
-          }}>
+      {itemCount == invoiceItems.length ? (
+        <View>
+          <Text>End of Invoice</Text>
+          <Pressable
+            onPress={() => {
+              console.log('Accepted Items on redirect: ', acceptedItems);
+              console.log('Rejected Items on redirect: ', rejectedItems);
+              navigation.navigate('InvoiceReviewScreen', {
+                acceptedItems: acceptedItems,
+                rejectedItems: rejectedItems,
+                invoiceItems: invoiceItems,
+              });
+            }}>
+            <Text>Review</Text>
+          </Pressable>
+        </View>
+      ) : (
+        <View>
           <View
             style={{
+              margin: 10,
+              marginRight: 20,
+              marginLeft: 20,
+              justifyContent: 'center',
               alignItems: 'center',
-              alignContent: 'center',
-              alignSelf: 'center',
             }}>
-            <Text>Item Name</Text>
+            <Text style={{fontWeight: 'bold'}}>
+              INVOICE ITEM #{itemCount + 1}
+            </Text>
           </View>
-          <Controller
-            control={control}
-            name="item_name"
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInput
-                onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={value}
-              />
-            )}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '95%',
-            alignSelf: 'flex-end',
-            borderBottomWidth: 1,
-            borderColor: '#b8b8b8',
-          }}>
           <View
             style={{
-              alignItems: 'center',
-              alignContent: 'center',
-              alignSelf: 'center',
+              paddingBottom: 20,
+              borderTopWidth: 1,
+              borderColor: '#b8b8b8',
+              backgroundColor: '#fff',
             }}>
-            <Text>Item Quantity</Text>
-          </View>
-          <Controller
-            control={control}
-            name="quantity"
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInput
-                onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={value}
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '95%',
+                alignSelf: 'flex-end',
+                borderBottomWidth: 1,
+                borderColor: '#b8b8b8',
+              }}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Text>Item Name</Text>
+              </View>
+              <Controller
+                control={control}
+                name="item_name"
+                render={({field: {onChange, onBlur, value}}) => (
+                  <TextInput
+                    onBlur={onBlur}
+                    onChangeText={value => onChange(value)}
+                    value={value}
+                  />
+                )}
               />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '95%',
+                alignSelf: 'flex-end',
+                borderBottomWidth: 1,
+                borderColor: '#b8b8b8',
+              }}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Text>Item Quantity</Text>
+              </View>
+              <Controller
+                control={control}
+                name="quantity"
+                render={({field: {onChange, onBlur, value}}) => (
+                  <TextInput
+                    onBlur={onBlur}
+                    onChangeText={value => onChange(value)}
+                    value={value}
+                  />
+                )}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '95%',
+                alignSelf: 'flex-end',
+                borderBottomWidth: 1,
+                borderColor: '#b8b8b8',
+              }}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Text>Item Weight</Text>
+              </View>
+              <Controller
+                control={control}
+                name="weight"
+                render={({field: {onChange, onBlur, value}}) => (
+                  <TextInput
+                    onBlur={onBlur}
+                    onChangeText={value => onChange(value)}
+                    value={value}
+                  />
+                )}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '95%',
+                alignSelf: 'flex-end',
+                borderBottomWidth: 1,
+                borderColor: '#b8b8b8',
+              }}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Text>Item Price Per Unit</Text>
+              </View>
+              <Controller
+                control={control}
+                name="price_per_unit"
+                render={({field: {onChange, onBlur, value}}) => (
+                  <TextInput
+                    onBlur={onBlur}
+                    onChangeText={value => onChange(value)}
+                    value={value}
+                  />
+                )}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '95%',
+                alignSelf: 'flex-end',
+                borderBottomWidth: 1,
+                borderColor: '#b8b8b8',
+              }}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Text>Minimum Stock Quantity</Text>
+              </View>
+              <Controller
+                control={control}
+                name="min_quantity"
+                render={({field: {onChange, onBlur, value}}) => (
+                  <TextInput
+                    onBlur={onBlur}
+                    onChangeText={value => onChange(value)}
+                    value={value}
+                    defaultValue="0"
+                  />
+                )}
+              />
+            </View>
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                width: '95%',
+                paddingTop: 10,
+                paddingBottom: 10,
+                alignSelf: 'flex-end',
+                borderBottomWidth: 1,
+                borderColor: '#b8b8b8',
+              }}>
+              <View
+                style={{
+                  alignItems: 'center',
+                  alignContent: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Text>Accept Item Delivery</Text>
+              </View>
+              <Controller
+                control={control}
+                name="accepted"
+                render={({field: {onChange, onBlur, value}}) => (
+                  <Switch
+                    onBlur={onBlur}
+                    onValueChange={value => {
+                      onChange(value);
+                      setRejected(!value);
+                    }}
+                    value={value}
+                    defaultValue={true}
+                  />
+                )}
+              />
+            </View>
+            {rejected && (
+              <>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '95%',
+                    alignSelf: 'flex-end',
+                    borderBottomWidth: 1,
+                    borderColor: '#b8b8b8',
+                  }}>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      alignContent: 'center',
+                      alignSelf: 'center',
+                    }}>
+                    <Text>Reject Quantity</Text>
+                  </View>
+                  <Controller
+                    control={control}
+                    name="rejection_quantity"
+                    render={({field: {onChange, onBlur, value}}) => (
+                      <TextInput
+                        onBlur={onBlur}
+                        onChangeText={value => onChange(value)}
+                        value={value}
+                        defaultValue=""
+                      />
+                    )}
+                  />
+                </View>
+                <View
+                  style={{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    width: '95%',
+                    alignSelf: 'flex-end',
+                    borderBottomWidth: 1,
+                    borderColor: '#b8b8b8',
+                  }}>
+                  <View
+                    style={{
+                      alignItems: 'center',
+                      alignContent: 'center',
+                      alignSelf: 'center',
+                    }}>
+                    <Text>Reject Reason</Text>
+                  </View>
+                  <Controller
+                    control={control}
+                    name="rejection_reason"
+                    render={({field: {onChange, onBlur, value}}) => (
+                      <TextInput
+                        onBlur={onBlur}
+                        onChangeText={value => onChange(value)}
+                        value={value}
+                        defaultValue=""
+                      />
+                    )}
+                  />
+                </View>
+              </>
             )}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '95%',
-            alignSelf: 'flex-end',
-            borderBottomWidth: 1,
-            borderColor: '#b8b8b8',
-          }}>
+          </View>
           <View
             style={{
-              alignItems: 'center',
-              alignContent: 'center',
-              alignSelf: 'center',
+              marginBottom: 20,
+              paddingBottom: 20,
+              borderBottomWidth: 1,
+              borderColor: '#b8b8b8',
+              backgroundColor: '#fff',
             }}>
-            <Text>Item Weight</Text>
-          </View>
-          <Controller
-            control={control}
-            name="weight"
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInput
-                onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={value}
-              />
+            {accepted && !complete && (
+              <View
+                style={{
+                  flexDirection: 'row',
+                  width: '80%',
+                  justifyContent: 'space-evenly',
+                  alignItems: 'center',
+                  alignSelf: 'center',
+                }}>
+                <Pressable
+                  onPress={() => {}}
+                  style={{
+                    backgroundColor: loading ? '#b8b8b8' : '#6883ba',
+                    padding: 10,
+                    paddingRight: 15,
+                    margin: 20,
+                    borderRadius: 30,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <MIcon
+                    name="search"
+                    size={12}
+                    color="#fff"
+                    style={{fontWeight: 'bold'}}
+                  />
+                  <Text
+                    style={{color: '#fff', fontWeight: 'bold', marginLeft: 5}}>
+                    Inventory items
+                  </Text>
+                </Pressable>
+                <Text>OR</Text>
+                <Pressable
+                  onPress={() => {
+                    handleAddNewInventoryItem();
+                  }}
+                  style={{
+                    backgroundColor: loading ? '#b8b8b8' : '#6883ba',
+                    padding: 10,
+                    paddingRight: 15,
+                    margin: 20,
+                    borderRadius: 30,
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}>
+                  <MIcon
+                    name="add"
+                    size={12}
+                    color="#fff"
+                    style={{fontWeight: 'bold'}}
+                  />
+                  <Text
+                    style={{color: '#fff', fontWeight: 'bold', marginLeft: 5}}>
+                    Inventory item
+                  </Text>
+                </Pressable>
+              </View>
             )}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '95%',
-            alignSelf: 'flex-end',
-            borderBottomWidth: 1,
-            borderColor: '#b8b8b8',
-          }}>
-          <View
-            style={{
-              alignItems: 'center',
-              alignContent: 'center',
-              alignSelf: 'center',
-            }}>
-            <Text>Item Price Per Unit</Text>
-          </View>
-          <Controller
-            control={control}
-            name="price_per_unit"
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInput
-                onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={value}
-              />
-            )}
-          />
-        </View>
-        <View
-          style={{
-            flexDirection: 'row',
-            justifyContent: 'space-between',
-            width: '95%',
-            alignSelf: 'flex-end',
-            borderBottomWidth: 1,
-            borderColor: '#b8b8b8',
-          }}>
-          <View
-            style={{
-              alignItems: 'center',
-              alignContent: 'center',
-              alignSelf: 'center',
-            }}>
-            <Text>Minimum Stock Quantity</Text>
-          </View>
-          <Controller
-            control={control}
-            name="min_quantity"
-            render={({field: {onChange, onBlur, value}}) => (
-              <TextInput
-                onBlur={onBlur}
-                onChangeText={value => onChange(value)}
-                value={value}
-                defaultValue="0"
-              />
-            )}
-          />
-        </View>
-      </View>
-      <View
-        style={{
-          marginBottom: 20,
-          paddingBottom: 20,
-          borderBottomWidth: 1,
-          borderColor: '#b8b8b8',
-          backgroundColor: '#fff',
-        }}>
-        {!reviewed && !rejected && !accepted && (
-          <View>
             <Pressable
               onPress={handleSubmit(onSubmit)}
               style={{
@@ -841,173 +1200,13 @@ const InvoiceReviewItemModal = ({route, navigation}) => {
                   fontWeight: 'bold',
                   alignSelf: 'center',
                 }}>
-                CONFIRM
+                Save
               </Text>
             </Pressable>
           </View>
-        )}
-        {reviewed && !rejected && !accepted && (
-          <View style={{flexDirection: 'row', justifyContent: 'space-evenly'}}>
-            <Pressable
-              onPress={() => {
-                onAccept(invoiceItemData);
-              }}
-              style={{
-                backgroundColor: '#6883ba',
-                padding: 10,
-                width: '30%',
-                alignSelf: 'center',
-                borderRadius: 30,
-                marginBottom: 20,
-                marginTop: 20,
-              }}>
-              <Text
-                style={{
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  alignSelf: 'center',
-                }}>
-                ACCEPT
-              </Text>
-            </Pressable>
-            <Pressable
-              onPress={() => {
-                setRejected(true);
-              }}
-              style={{
-                backgroundColor: '#6883ba',
-                padding: 10,
-                width: '30%',
-                alignSelf: 'center',
-                borderRadius: 30,
-                marginBottom: 20,
-                marginTop: 20,
-              }}>
-              <Text
-                style={{
-                  color: '#fff',
-                  fontWeight: 'bold',
-                  alignSelf: 'center',
-                }}>
-                REJECT
-              </Text>
-            </Pressable>
-          </View>
-        )}
-        {rejected && !complete && (
-          <View>
-            <Text> Reject Item</Text>
-            <Text>Rejection Reason</Text>
-            <Controller
-              control={rejectControl}
-              name="rejection_reason"
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-            />
-            <Text>Rejection Quantity</Text>
-            <Controller
-              control={rejectControl}
-              name="rejection_quantity"
-              render={({field: {onChange, onBlur, value}}) => (
-                <TextInput
-                  onBlur={onBlur}
-                  onChangeText={value => onChange(value)}
-                  value={value}
-                />
-              )}
-            />
-            <Pressable onPress={handleRejectSubmit(onRejectSubmit)}>
-              <Text>Reject</Text>
-            </Pressable>
-          </View>
-        )}
-        {accepted && !complete && (
-          <View
-            style={{
-              flexDirection: 'row',
-              width: '80%',
-              justifyContent: 'space-evenly',
-              alignItems: 'center',
-              alignSelf: 'center',
-            }}>
-            <Pressable
-              onPress={() => {}}
-              style={{
-                backgroundColor: loading ? '#b8b8b8' : '#6883ba',
-                padding: 10,
-                paddingRight: 15,
-                margin: 20,
-                borderRadius: 30,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <MIcon
-                name="search"
-                size={12}
-                color="#fff"
-                style={{fontWeight: 'bold'}}
-              />
-              <Text style={{color: '#fff', fontWeight: 'bold', marginLeft: 5}}>
-                Inventory items
-              </Text>
-            </Pressable>
-            <Text>OR</Text>
-            <Pressable
-              onPress={() => {
-                handleAddNewInventoryItem();
-              }}
-              style={{
-                backgroundColor: loading ? '#b8b8b8' : '#6883ba',
-                padding: 10,
-                paddingRight: 15,
-                margin: 20,
-                borderRadius: 30,
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}>
-              <MIcon
-                name="add"
-                size={12}
-                color="#fff"
-                style={{fontWeight: 'bold'}}
-              />
-              <Text style={{color: '#fff', fontWeight: 'bold', marginLeft: 5}}>
-                Inventory item
-              </Text>
-            </Pressable>
-          </View>
-        )}
-        {complete && (
-          <Pressable
-            onPress={onPressNext}
-            style={{
-              backgroundColor: '#6883ba',
-              padding: 10,
-              width: '30%',
-              alignSelf: 'center',
-              borderRadius: 30,
-              marginBottom: 20,
-              marginTop: 20,
-            }}>
-            <Text
-              style={{
-                color: '#fff',
-                fontWeight: 'bold',
-                alignSelf: 'center',
-              }}>
-              NEXT
-            </Text>
-          </Pressable>
-        )}
-      </View>
-    </View>
+        </View>
+      )}
+    </Modal>
   );
 };
 

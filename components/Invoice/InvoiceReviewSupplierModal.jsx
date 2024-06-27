@@ -93,13 +93,16 @@ const InvoiceReviewSupplierModal = ({
   // GET SUPPLIERS
 
   const getSuppliers = async () => {
+    console.log('getting suppliers');
     try {
       const result = await client.graphql({
         query: listSuppliers,
       });
       if (result) {
         setSuppliersList(result['data']['listSuppliers']['items']);
+        console.log('suppliers list: ', suppliersList);
       }
+      console.log('suppliers list: ', suppliersList);
     } catch (error) {
       console.log(error);
     }
@@ -119,6 +122,14 @@ const InvoiceReviewSupplierModal = ({
     console.log('data in function: ', data);
 
     // Matching call
+    if (suppliersList.length < 1) {
+      Alert.alert(
+        'No Suppliers Found',
+        'No suppliers found. Please create a supplier.',
+      );
+      setLoading(false);
+      return;
+    }
     const response = await openai.chat.completions.create({
       messages: [
         {

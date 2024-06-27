@@ -222,12 +222,12 @@ const InvoiceReview = () => {
           detailsReviewed={detailsReviewed}
           setDetailsReviewed={setDetailsReviewed}
         />
-        {/* <InvoiceReviewItemModal
+        <InvoiceReviewItemModal
           visible={itemModalVisible}
           setVisible={handleItemVisible}
           itemReviewed={itemReviewed}
           setItemReviewed={setItemReviewed}
-        /> */}
+        />
       </View>
     </>
   );

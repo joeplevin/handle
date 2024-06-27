@@ -1,6 +1,18 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
+export const getSupplierInvoices = /* GraphQL */ `
+  query MyQuery2($id: ID!) {
+    getSupplier(id: $id) {
+      invoices {
+        items {
+          invoiceNumber
+        }
+      }
+    }
+  }
+`;
+
 export const getSupplier = /* GraphQL */ `
   query GetSupplier($id: ID!) {
     getSupplier(id: $id) {
@@ -29,6 +41,7 @@ export const getSupplier = /* GraphQL */ `
     }
   }
 `;
+
 export const listSuppliers = /* GraphQL */ `
   query ListSuppliers(
     $filter: ModelSupplierFilterInput

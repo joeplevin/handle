@@ -70,32 +70,6 @@
       "service": "Lambda"
     }
   },
-  "parameters": {
-    "AMPLIFY_function_handle9310d90dPostConfirmation_GROUP": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "handle9310d90dPostConfirmation"
-        }
-      ]
-    },
-    "AMPLIFY_function_handle9310d90dPostConfirmation_deploymentBucketName": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "handle9310d90dPostConfirmation"
-        }
-      ]
-    },
-    "AMPLIFY_function_handle9310d90dPostConfirmation_s3Key": {
-      "usedBy": [
-        {
-          "category": "function",
-          "resourceName": "handle9310d90dPostConfirmation"
-        }
-      ]
-    }
-  },
   "predictions": {
     "identifyTextc871873b": {
       "dependsOn": [],

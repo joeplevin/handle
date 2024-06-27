@@ -21,7 +21,7 @@ import {ReadableStream} from 'web-streams-polyfill';
 globalThis.ReadableStream = ReadableStream;
 
 try {
-  Amplify.configure(awsconfig);
+  Amplify.configure(amplifyconfig);
 } catch (e) {
   console.log('Error: ', e);
 }

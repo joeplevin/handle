@@ -8,7 +8,12 @@ import DateTimePicker, {
   DateTimePickerAndroid,
 } from '@react-native-community/datetimepicker';
 import moment from 'moment';
-import {getSupplier} from '../../src/graphql/queries';
+import {
+  getInvoice,
+  getSupplier,
+  getSupplierInvoices,
+  getSupplierWithInvoices,
+} from '../../src/graphql/queries';
 import {useInvoice} from '../../amplify/context/InvoiceContext';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
@@ -110,12 +115,12 @@ const InvoiceReviewDetailsModal = ({
         variables: {
           input: {
             supplierId: supplier['id'],
-            supplier: {},
             invoiceNumber: data['invoiceNumber'],
             date: dateToSave,
             totalAmount: parseFloat(data['totalAmount']),
             imageUrl: invoiceUrl,
             groups: userPoolId.toString(),
+            supplierInvoicesId: supplier['id'],
           },
         },
       });
@@ -126,43 +131,45 @@ const InvoiceReviewDetailsModal = ({
       );
       setParseInvoiceData(newInvoice['data']['createInvoice']);
       Alert.alert('Invoice created successfully');
-      // navigation.navigate('InvoiceReviewScreen', {
-      //   screen: 'InvoiceReviewScreen',
-      //   supplier: supplier,
-      //   invoice: newInvoice['data']['createInvoice'],
-      //   invoiceUrl: invoice['invoiceUrl'],
-      //   invoiceItems: route.params['invoiceItems'],
-      //   invoiceDetails: true,
-      //   selectedSupplier: route.params['selectedSupplier'],
-      //   reviewedSupplier: route.params['reviewedSupplier'],
-      // });
-
-      // const updatedSupplier = await client.graphql({
-      //   query: updateSupplier,
-      //   variables: {
-      //     input: {
-      //       id: supplier['id'],
-      //       invoices: {
-      //         items: {
-      //           id: newInvoice['data']['createInvoice']['id'],
-      //           invoiceNumber:
-      //             newInvoice['data']['createInvoice']['invoiceNumber'],
-      //           date: newInvoice['data']['createInvoice']['date'],
-      //           totalAmount: newInvoice['data']['createInvoice']['totalAmount'],
-      //           imageUrl: newInvoice['data']['createInvoice']['imageUrl'],
-      //           groups: newInvoice['data']['createInvoice']['groups'],
-      //         },
-      //       },
-      //     },
-      //   },
-      // });
       setDetailsReviewed(true);
-      setVisible(false);
+      setVisible();
+      ``;
     } catch (err) {
-      console.log('Error updating supplier: ', err);
-      Alert.alert('Error updating supplier');
+      console.log('Error creating invoice: ', err);
+      Alert.alert('Error creating invoice');
     }
   };
+
+  // navigation.navigate('InvoiceReviewScreen', {
+  //   screen: 'InvoiceReviewScreen',
+  //   supplier: supplier,
+  //   invoice: newInvoice['data']['createInvoice'],
+  //   invoiceUrl: invoice['invoiceUrl'],
+  //   invoiceItems: route.params['invoiceItems'],
+  //   invoiceDetails: true,
+  //   selectedSupplier: route.params['selectedSupplier'],
+  //   reviewedSupplier: route.params['reviewedSupplier'],
+  // });
+
+  // const updatedSupplier = await client.graphql({
+  //   query: updateSupplier,
+  //   variables: {
+  //     input: {
+  //       id: supplier['id'],
+  //       invoices: {
+  //         items: {
+  //           id: newInvoice['data']['createInvoice']['id'],
+  //           invoiceNumber:
+  //             newInvoice['data']['createInvoice']['invoiceNumber'],
+  //           date: newInvoice['data']['createInvoice']['date'],
+  //           totalAmount: newInvoice['data']['createInvoice']['totalAmount'],
+  //           imageUrl: newInvoice['data']['createInvoice']['imageUrl'],
+  //           groups: newInvoice['data']['createInvoice']['groups'],
+  //         },
+  //       },
+  //     },
+  //   },
+  // });
 
   return (
     <Modal visible={visible}>
