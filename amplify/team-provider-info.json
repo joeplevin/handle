@@ -13,9 +13,6 @@
       "AuthTriggerTemplateURL": "https://s3.amazonaws.com/amplify-handle-dev-af628-deployment/amplify-cfn-templates/auth/auth-trigger-cloudformation-template.json"
     },
     "categories": {
-      "api": {
-        "handle": {}
-      },
       "storage": {
         "invoices": {}
       },
@@ -31,6 +28,9 @@
       },
       "predictions": {
         "identifyTextc871873b": {}
+      },
+      "api": {
+        "handle": {}
       }
     }
   }

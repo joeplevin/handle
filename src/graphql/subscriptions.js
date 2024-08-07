@@ -12,10 +12,6 @@ export const onCreateSupplier = /* GraphQL */ `
       email
       phone
       address
-      catalogItems {
-        nextToken
-        __typename
-      }
       inventoryItems {
         nextToken
         __typename
@@ -43,10 +39,6 @@ export const onUpdateSupplier = /* GraphQL */ `
       email
       phone
       address
-      catalogItems {
-        nextToken
-        __typename
-      }
       inventoryItems {
         nextToken
         __typename
@@ -74,10 +66,6 @@ export const onDeleteSupplier = /* GraphQL */ `
       email
       phone
       address
-      catalogItems {
-        nextToken
-        __typename
-      }
       inventoryItems {
         nextToken
         __typename
@@ -94,114 +82,6 @@ export const onDeleteSupplier = /* GraphQL */ `
     }
   }
 `;
-export const onCreateCatalogItem = /* GraphQL */ `
-  subscription OnCreateCatalogItem(
-    $filter: ModelSubscriptionCatalogItemFilterInput
-    $owner: String
-  ) {
-    onCreateCatalogItem(filter: $filter, owner: $owner) {
-      id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
-      name
-      pricePerUnit
-      availableQuantity
-      inventoryItems {
-        nextToken
-        __typename
-      }
-      groups
-      createdAt
-      updatedAt
-      supplierCatalogItemsId
-      owner
-      __typename
-    }
-  }
-`;
-export const onUpdateCatalogItem = /* GraphQL */ `
-  subscription OnUpdateCatalogItem(
-    $filter: ModelSubscriptionCatalogItemFilterInput
-    $owner: String
-  ) {
-    onUpdateCatalogItem(filter: $filter, owner: $owner) {
-      id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
-      name
-      pricePerUnit
-      availableQuantity
-      inventoryItems {
-        nextToken
-        __typename
-      }
-      groups
-      createdAt
-      updatedAt
-      supplierCatalogItemsId
-      owner
-      __typename
-    }
-  }
-`;
-export const onDeleteCatalogItem = /* GraphQL */ `
-  subscription OnDeleteCatalogItem(
-    $filter: ModelSubscriptionCatalogItemFilterInput
-    $owner: String
-  ) {
-    onDeleteCatalogItem(filter: $filter, owner: $owner) {
-      id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
-      name
-      pricePerUnit
-      availableQuantity
-      inventoryItems {
-        nextToken
-        __typename
-      }
-      groups
-      createdAt
-      updatedAt
-      supplierCatalogItemsId
-      owner
-      __typename
-    }
-  }
-`;
 export const onCreateInventoryItem = /* GraphQL */ `
   subscription OnCreateInventoryItem(
     $filter: ModelSubscriptionInventoryItemFilterInput
@@ -210,23 +90,11 @@ export const onCreateInventoryItem = /* GraphQL */ `
     onCreateInventoryItem(filter: $filter, owner: $owner) {
       id
       name
-      weight
-      units
-      averagePrice
-      catalogItem {
-        id
-        supplierId
-        name
-        pricePerUnit
-        availableQuantity
-        groups
-        createdAt
-        updatedAt
-        supplierCatalogItemsId
-        owner
-        __typename
-      }
-      catalogItemId
+      totalQuantity
+      totalWeight
+      unitWeight
+      unitMeasurement
+      unitAveragePrice
       invoiceItems {
         nextToken
         __typename
@@ -251,7 +119,6 @@ export const onCreateInventoryItem = /* GraphQL */ `
       minQuantity
       createdAt
       updatedAt
-      catalogItemInventoryItemsId
       owner
       __typename
     }
@@ -265,23 +132,11 @@ export const onUpdateInventoryItem = /* GraphQL */ `
     onUpdateInventoryItem(filter: $filter, owner: $owner) {
       id
       name
-      weight
-      units
-      averagePrice
-      catalogItem {
-        id
-        supplierId
-        name
-        pricePerUnit
-        availableQuantity
-        groups
-        createdAt
-        updatedAt
-        supplierCatalogItemsId
-        owner
-        __typename
-      }
-      catalogItemId
+      totalQuantity
+      totalWeight
+      unitWeight
+      unitMeasurement
+      unitAveragePrice
       invoiceItems {
         nextToken
         __typename
@@ -306,7 +161,6 @@ export const onUpdateInventoryItem = /* GraphQL */ `
       minQuantity
       createdAt
       updatedAt
-      catalogItemInventoryItemsId
       owner
       __typename
     }
@@ -320,23 +174,11 @@ export const onDeleteInventoryItem = /* GraphQL */ `
     onDeleteInventoryItem(filter: $filter, owner: $owner) {
       id
       name
-      weight
-      units
-      averagePrice
-      catalogItem {
-        id
-        supplierId
-        name
-        pricePerUnit
-        availableQuantity
-        groups
-        createdAt
-        updatedAt
-        supplierCatalogItemsId
-        owner
-        __typename
-      }
-      catalogItemId
+      totalQuantity
+      totalWeight
+      unitWeight
+      unitMeasurement
+      unitAveragePrice
       invoiceItems {
         nextToken
         __typename
@@ -361,7 +203,6 @@ export const onDeleteInventoryItem = /* GraphQL */ `
       minQuantity
       createdAt
       updatedAt
-      catalogItemInventoryItemsId
       owner
       __typename
     }
@@ -560,15 +401,15 @@ export const onCreateInvoiceItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -576,15 +417,12 @@ export const onCreateInvoiceItem = /* GraphQL */ `
       name
       totalQuantity
       acceptedQuantity
-      weight
-      units
+      unitWeight
+      unitMeasurement
       pricePerUnit
       expiryDate
       accepted
-      rejectionReasons {
-        nextToken
-        __typename
-      }
+      rejectionReasons
       groups
       createdAt
       updatedAt
@@ -620,15 +458,15 @@ export const onUpdateInvoiceItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -636,15 +474,12 @@ export const onUpdateInvoiceItem = /* GraphQL */ `
       name
       totalQuantity
       acceptedQuantity
-      weight
-      units
+      unitWeight
+      unitMeasurement
       pricePerUnit
       expiryDate
       accepted
-      rejectionReasons {
-        nextToken
-        __typename
-      }
+      rejectionReasons
       groups
       createdAt
       updatedAt
@@ -680,15 +515,15 @@ export const onDeleteInvoiceItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -696,134 +531,17 @@ export const onDeleteInvoiceItem = /* GraphQL */ `
       name
       totalQuantity
       acceptedQuantity
-      weight
-      units
+      unitWeight
+      unitMeasurement
       pricePerUnit
       expiryDate
       accepted
-      rejectionReasons {
-        nextToken
-        __typename
-      }
+      rejectionReasons
       groups
       createdAt
       updatedAt
       inventoryItemInvoiceItemsId
       invoiceItemsId
-      owner
-      __typename
-    }
-  }
-`;
-export const onCreateRejectionReason = /* GraphQL */ `
-  subscription OnCreateRejectionReason(
-    $filter: ModelSubscriptionRejectionReasonFilterInput
-    $owner: String
-  ) {
-    onCreateRejectionReason(filter: $filter, owner: $owner) {
-      id
-      invoiceItem {
-        id
-        invoiceId
-        inventoryItemId
-        name
-        totalQuantity
-        acceptedQuantity
-        weight
-        units
-        pricePerUnit
-        expiryDate
-        accepted
-        groups
-        createdAt
-        updatedAt
-        inventoryItemInvoiceItemsId
-        invoiceItemsId
-        owner
-        __typename
-      }
-      invoiceItemId
-      reason
-      groups
-      createdAt
-      updatedAt
-      invoiceItemRejectionReasonsId
-      owner
-      __typename
-    }
-  }
-`;
-export const onUpdateRejectionReason = /* GraphQL */ `
-  subscription OnUpdateRejectionReason(
-    $filter: ModelSubscriptionRejectionReasonFilterInput
-    $owner: String
-  ) {
-    onUpdateRejectionReason(filter: $filter, owner: $owner) {
-      id
-      invoiceItem {
-        id
-        invoiceId
-        inventoryItemId
-        name
-        totalQuantity
-        acceptedQuantity
-        weight
-        units
-        pricePerUnit
-        expiryDate
-        accepted
-        groups
-        createdAt
-        updatedAt
-        inventoryItemInvoiceItemsId
-        invoiceItemsId
-        owner
-        __typename
-      }
-      invoiceItemId
-      reason
-      groups
-      createdAt
-      updatedAt
-      invoiceItemRejectionReasonsId
-      owner
-      __typename
-    }
-  }
-`;
-export const onDeleteRejectionReason = /* GraphQL */ `
-  subscription OnDeleteRejectionReason(
-    $filter: ModelSubscriptionRejectionReasonFilterInput
-    $owner: String
-  ) {
-    onDeleteRejectionReason(filter: $filter, owner: $owner) {
-      id
-      invoiceItem {
-        id
-        invoiceId
-        inventoryItemId
-        name
-        totalQuantity
-        acceptedQuantity
-        weight
-        units
-        pricePerUnit
-        expiryDate
-        accepted
-        groups
-        createdAt
-        updatedAt
-        inventoryItemInvoiceItemsId
-        invoiceItemsId
-        owner
-        __typename
-      }
-      invoiceItemId
-      reason
-      groups
-      createdAt
-      updatedAt
-      invoiceItemRejectionReasonsId
       owner
       __typename
     }
@@ -1077,15 +795,15 @@ export const onCreateRecipeItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1119,15 +837,15 @@ export const onUpdateRecipeItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1161,15 +879,15 @@ export const onDeleteRecipeItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1199,15 +917,15 @@ export const onCreateWasteItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1234,15 +952,15 @@ export const onUpdateWasteItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1269,15 +987,15 @@ export const onDeleteWasteItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1318,15 +1036,15 @@ export const onCreateSupplierInventory = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1361,15 +1079,15 @@ export const onUpdateSupplierInventory = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1404,15 +1122,15 @@ export const onDeleteSupplierInventory = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1435,15 +1153,15 @@ export const onCreateInventoryItemOrder = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1474,15 +1192,15 @@ export const onUpdateInventoryItemOrder = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -1513,15 +1231,15 @@ export const onDeleteInventoryItemOrder = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }

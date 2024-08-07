@@ -19,12 +19,16 @@ import MIcon from 'react-native-vector-icons/MaterialIcons';
 import {Alert} from 'react-native';
 import OpenAI from 'openai';
 import {TextInput} from 'react-native-gesture-handler';
+import {generateClient} from 'aws-amplify/api';
+import {listInventoryItems} from '../../src/graphql/queries';
 import {
   launchDocumentScannerAsync,
   ResultFormatOptions,
 } from '@infinitered/react-native-mlkit-document-scanner';
 import InvoiceReview from '../../components/Invoice/InvoiceReview';
-import {useInvoice} from '../../amplify/context/InvoiceContext';
+import {useInvoice} from '../../context/InvoiceContext';
+
+const client = generateClient();
 
 const InvoiceCameraScreen = ({navigation}) => {
   // Convert scanned image promise to file type.
@@ -56,6 +60,8 @@ const InvoiceCameraScreen = ({navigation}) => {
     setParseInvoiceData,
     parseInvoiceSupplierData,
     setParseInvoiceSupplierData,
+    inventoryItemsBeforeUpdate,
+    setInventoryItemsBeforeUpdate,
   } = useInvoice();
 
   const testInvoice = {
@@ -65,52 +71,32 @@ const InvoiceCameraScreen = ({navigation}) => {
   };
   const testItems = [
     {
-      item_name: '400g Rega San Marzano Tomatoes Tinned',
-      price_per_unit: 2.5,
-      quantity: 10,
-      weight: '400g',
+      name: '400g Rega San Marzano Tomatoes Tinned',
+      pricePerUnit: 2.5,
+      totalQuantity: 10,
+      unitWeight: '400',
+      unitMeasurement: 'grams',
     },
     {
-      item_name: '250g Fresh Heritage Tomatoes',
-      price_per_unit: 1.59,
-      quantity: 5,
-      weight: '250g',
+      name: '250g Fresh Heritage Tomatoes',
+      pricePerUnit: 1.59,
+      totalQuantity: 5,
+      unitWeight: '250g',
+      unitMeasurement: 'grams',
     },
     {
-      item_name: '500g Carrots',
-      price_per_unit: 2,
-      quantity: 10,
-      weight: '500g',
+      name: '500g Carrots',
+      pricePerUnit: 2,
+      totalQuantity: 10,
+      unitWeight: '500g',
+      unitMeasurement: 'grams',
     },
     {
-      item_name: '6 Pack Braeburn Apples',
-      price_per_unit: 3,
-      quantity: 7,
-      weight: '',
-    },
-    {
-      item_name: 'Sea Bass Fillet',
-      price_per_unit: 1.5,
-      quantity: 9,
-      weight: '',
-    },
-    {
-      item_name: '500g New Potatoes',
-      price_per_unit: 3.5,
-      quantity: 8,
-      weight: '500g',
-    },
-    {
-      item_name: '1kg Rousseau Potatoes',
-      price_per_unit: 3.5,
-      quantity: 12,
-      weight: '1kg',
-    },
-    {
-      item_name: 'Porneio',
-      price_per_unit: 0.7,
-      quantity: 1,
-      weight: '',
+      name: '6 Pack Braeburn Apples',
+      pricePerUnit: 3,
+      totalQuantity: 7,
+      unitWeight: 1,
+      unitMeasurement: 'units',
     },
   ];
   const testSupplier = {
@@ -143,10 +129,18 @@ const InvoiceCameraScreen = ({navigation}) => {
     // set invoice name to current datetime
     setInvoiceName(new Date().toISOString());
     console.log('Invoice Name: ', new Date().toISOString());
+    const loadInventory = async () => {
+      const loadedInventory = await getInventory();
+      if (loadedInventory !== null) {
+        setInventoryItemsBeforeUpdate(loadedInventory);
+      }
+    };
+    loadInventory();
   }, []);
 
   console.log('UserPoolId on Camera screen: ', userPoolId);
   console.log('Supplier on Camera Screen: ', parseInvoiceSupplierData);
+  console.log('Invoice Items on Camera Screen: ', parseInvoiceItemData);
   // Form setup
 
   const extractData = async fileName => {
@@ -237,7 +231,7 @@ const InvoiceCameraScreen = ({navigation}) => {
           messages: [
             {
               role: 'system',
-              content: `Parse this data if it is an invoice: ${extractedData['text']['fullText']}. The invoice data should be returned in JSON format & include the following objects: invoice, supplier & invoice_items. The invoice object should have the following fields if they exist: invoice_number, invoice_date & total_cost. The supplier object should contain name, email & phone fields. The address should contain first_line, city & postcode. Each invoice_item should contain item_name, quantity, weight & price_per_unit. Replace missing values with a string 'not found' & ensure all objects are named in lower case.`,
+              content: `Parse this data if it is an invoice: ${extractedData['text']['fullText']}. The invoice data should be returned in JSON format & include the following objects: invoice, supplier & invoice_items. The invoice object should have the following fields if they exist: invoice_number, invoice_date & total_cost. The supplier object should contain name, email & phone fields. The address should contain first_line, city & postcode. Each invoice_item should contain name, units, unitWeight, unitMeasurement & pricePerUnit. Replace missing values with a string 'not found' & ensure all objects are named in lower case.`,
             },
           ],
           model: 'gpt-3.5-turbo',
@@ -295,8 +289,25 @@ const InvoiceCameraScreen = ({navigation}) => {
       console.log('Error: ', error);
       Alert.alert('An error occurred. Please try again.');
     }
+    console.log('inventoryItemsBeforeUpdate: ', inventoryItemsBeforeUpdate);
   };
 
+  const getInventory = async () => {
+    try {
+      const inventory = await client.graphql({
+        query: listInventoryItems,
+      });
+      if (inventory) {
+        console.log(
+          'Inventory Items: ',
+          inventory['data']['listInventoryItems']['items'],
+        );
+        return inventory['data']['listInventoryItems']['items'];
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
   // const onPressNext = () => {
   //   navigation.navigate('InvoiceReviewScreen', {
   //     invoiceItems: parseInvoiceItemData,
@@ -469,13 +480,12 @@ const InvoiceCameraScreen = ({navigation}) => {
                 </View>
               )}
               {loading && (
-                <View style={{backgroundColor: 'red'}}>
+                <View style={{marginTop: 100}}>
                   <ActivityIndicator
                     size="large"
                     color="#f56042"
                     style={{alignSelf: 'center'}}
                   />
-                  <Text>Fully Loaded</Text>
                 </View>
               )}
             </View>

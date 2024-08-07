@@ -13,7 +13,7 @@ import MIcon from 'react-native-vector-icons/MaterialIcons';
 import {Text, View} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
 import InventoryButtonBlock from './InventoryButtonBlock';
-import {InvoiceProvider} from '../amplify/context/InvoiceContext';
+import {InvoiceProvider} from '../context/InvoiceContext';
 const Stack = createStackNavigator();
 
 const InventoryStack = ({route, navigation}) => {

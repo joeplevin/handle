@@ -14,7 +14,7 @@ import {
   getSupplierInvoices,
   getSupplierWithInvoices,
 } from '../../src/graphql/queries';
-import {useInvoice} from '../../amplify/context/InvoiceContext';
+import {useInvoice} from '../../context/InvoiceContext';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 
 const client = generateClient();

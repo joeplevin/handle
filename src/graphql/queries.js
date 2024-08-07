@@ -1,18 +1,6 @@
 /* eslint-disable */
 // this is an auto generated file. This will be overwritten
 
-export const getSupplierInvoices = /* GraphQL */ `
-  query MyQuery2($id: ID!) {
-    getSupplier(id: $id) {
-      invoices {
-        items {
-          invoiceNumber
-        }
-      }
-    }
-  }
-`;
-
 export const getSupplier = /* GraphQL */ `
   query GetSupplier($id: ID!) {
     getSupplier(id: $id) {
@@ -21,10 +9,6 @@ export const getSupplier = /* GraphQL */ `
       email
       phone
       address
-      catalogItems {
-        nextToken
-        __typename
-      }
       inventoryItems {
         nextToken
         __typename
@@ -41,7 +25,6 @@ export const getSupplier = /* GraphQL */ `
     }
   }
 `;
-
 export const listSuppliers = /* GraphQL */ `
   query ListSuppliers(
     $filter: ModelSupplierFilterInput
@@ -66,86 +49,16 @@ export const listSuppliers = /* GraphQL */ `
     }
   }
 `;
-export const getCatalogItem = /* GraphQL */ `
-  query GetCatalogItem($id: ID!) {
-    getCatalogItem(id: $id) {
-      id
-      supplier {
-        id
-        name
-        email
-        phone
-        address
-        groups
-        createdAt
-        updatedAt
-        owner
-        __typename
-      }
-      supplierId
-      name
-      pricePerUnit
-      availableQuantity
-      inventoryItems {
-        nextToken
-        __typename
-      }
-      groups
-      createdAt
-      updatedAt
-      supplierCatalogItemsId
-      owner
-      __typename
-    }
-  }
-`;
-export const listCatalogItems = /* GraphQL */ `
-  query ListCatalogItems(
-    $filter: ModelCatalogItemFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listCatalogItems(filter: $filter, limit: $limit, nextToken: $nextToken) {
-      items {
-        id
-        supplierId
-        name
-        pricePerUnit
-        availableQuantity
-        groups
-        createdAt
-        updatedAt
-        supplierCatalogItemsId
-        owner
-        __typename
-      }
-      nextToken
-      __typename
-    }
-  }
-`;
 export const getInventoryItem = /* GraphQL */ `
   query GetInventoryItem($id: ID!) {
     getInventoryItem(id: $id) {
       id
       name
-      weight
-      units
-      averagePrice
-      catalogItem {
-        id
-        supplierId
-        name
-        pricePerUnit
-        availableQuantity
-        groups
-        createdAt
-        updatedAt
-        supplierCatalogItemsId
-        owner
-        __typename
-      }
-      catalogItemId
+      totalQuantity
+      totalWeight
+      unitWeight
+      unitMeasurement
+      unitAveragePrice
       invoiceItems {
         nextToken
         __typename
@@ -170,7 +83,6 @@ export const getInventoryItem = /* GraphQL */ `
       minQuantity
       createdAt
       updatedAt
-      catalogItemInventoryItemsId
       owner
       __typename
     }
@@ -186,15 +98,15 @@ export const listInventoryItems = /* GraphQL */ `
       items {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -321,15 +233,15 @@ export const getInvoiceItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -337,15 +249,12 @@ export const getInvoiceItem = /* GraphQL */ `
       name
       totalQuantity
       acceptedQuantity
-      weight
-      units
+      unitWeight
+      unitMeasurement
       pricePerUnit
       expiryDate
       accepted
-      rejectionReasons {
-        nextToken
-        __typename
-      }
+      rejectionReasons
       groups
       createdAt
       updatedAt
@@ -370,78 +279,17 @@ export const listInvoiceItems = /* GraphQL */ `
         name
         totalQuantity
         acceptedQuantity
-        weight
-        units
+        unitWeight
+        unitMeasurement
         pricePerUnit
         expiryDate
         accepted
+        rejectionReasons
         groups
         createdAt
         updatedAt
         inventoryItemInvoiceItemsId
         invoiceItemsId
-        owner
-        __typename
-      }
-      nextToken
-      __typename
-    }
-  }
-`;
-export const getRejectionReason = /* GraphQL */ `
-  query GetRejectionReason($id: ID!) {
-    getRejectionReason(id: $id) {
-      id
-      invoiceItem {
-        id
-        invoiceId
-        inventoryItemId
-        name
-        totalQuantity
-        acceptedQuantity
-        weight
-        units
-        pricePerUnit
-        expiryDate
-        accepted
-        groups
-        createdAt
-        updatedAt
-        inventoryItemInvoiceItemsId
-        invoiceItemsId
-        owner
-        __typename
-      }
-      invoiceItemId
-      reason
-      groups
-      createdAt
-      updatedAt
-      invoiceItemRejectionReasonsId
-      owner
-      __typename
-    }
-  }
-`;
-export const listRejectionReasons = /* GraphQL */ `
-  query ListRejectionReasons(
-    $filter: ModelRejectionReasonFilterInput
-    $limit: Int
-    $nextToken: String
-  ) {
-    listRejectionReasons(
-      filter: $filter
-      limit: $limit
-      nextToken: $nextToken
-    ) {
-      items {
-        id
-        invoiceItemId
-        reason
-        groups
-        createdAt
-        updatedAt
-        invoiceItemRejectionReasonsId
         owner
         __typename
       }
@@ -599,15 +447,15 @@ export const getRecipeItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -658,15 +506,15 @@ export const getWasteItem = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -729,15 +577,15 @@ export const getSupplierInventory = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }
@@ -782,15 +630,15 @@ export const getInventoryItemOrder = /* GraphQL */ `
       inventoryItem {
         id
         name
-        weight
-        units
-        averagePrice
-        catalogItemId
+        totalQuantity
+        totalWeight
+        unitWeight
+        unitMeasurement
+        unitAveragePrice
         groups
         minQuantity
         createdAt
         updatedAt
-        catalogItemInventoryItemsId
         owner
         __typename
       }

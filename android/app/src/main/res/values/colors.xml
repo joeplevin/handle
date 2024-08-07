@@ -1,0 +1,21 @@
+<resources>
+<!-- red/orange -->
+    <color name="md_theme_dark_primary">#f56042</color>
+<!-- dark blue -->
+    <color name="md_theme_dark_primary_dark">#2B2D42</color>
+<!-- light blue -->
+    <color name="md_theme_dark_primary_light">#6883BA</color>
+<!-- light pink -->
+    <color name="md_theme_dark_secondary">#F7E1D7</color>
+<!-- light green -->
+    <color name="md_theme_dark_secondary_dark">#B0E298</color>
+    <color name="md_theme_dark_secondary_light">#FF0000</color>
+    <color name="md_theme_dark_background">#FF0000</color>
+    <color name="md_theme_dark_surface">#FF0000</color>
+    <color name="md_theme_dark_error">#FF0000</color>
+    <color name="md_theme_dark_on_primary">#FF0000</color>
+    <color name="md_theme_dark_on_secondary">#FF0000</color>
+    <color name="md_theme_dark_on_background">#FF0000</color>
+    <color name="md_theme_dark_on_surface">#FF0000</color>
+    <color name="md_theme_dark_on_error">#FF0000</color>
+</resources>

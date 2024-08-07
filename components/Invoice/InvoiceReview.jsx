@@ -6,7 +6,7 @@ import InvoiceReviewItemModal from '../Invoice/InvoiceReviewItemModal';
 import {useState, useEffect} from 'react';
 import {fetchAuthSession} from 'aws-amplify/auth';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
-import {useInvoice} from '../../amplify/context/InvoiceContext';
+import {useInvoice} from '../../context/InvoiceContext';
 
 const InvoiceReview = () => {
   const {
@@ -40,10 +40,10 @@ const InvoiceReview = () => {
   }
   //Modals
   const [supplierModalVisible, setSupplierModalVisible] = useState(false);
-  const [supplierReviewed, setSupplierReviewed] = useState(false);
+  const [supplierReviewed, setSupplierReviewed] = useState(true);
 
   const [detailsModalVisible, setdetailsModalVisible] = useState(false);
-  const [detailsReviewed, setDetailsReviewed] = useState(false);
+  const [detailsReviewed, setDetailsReviewed] = useState(true);
 
   const [itemModalVisible, setItemModalVisible] = useState(false);
   const [itemReviewed, setItemReviewed] = useState(false);

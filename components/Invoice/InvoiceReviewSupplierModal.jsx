@@ -20,7 +20,7 @@ import {generateClient} from 'aws-amplify/api';
 import {fetchAuthSession} from 'aws-amplify/auth';
 import OpenAI from 'openai';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
-import {useInvoice} from '../../amplify/context/InvoiceContext';
+import {useInvoice} from '../../context/InvoiceContext';
 
 const client = generateClient();
 const openai = new OpenAI({
@@ -150,7 +150,11 @@ const InvoiceReviewSupplierModal = ({
     });
 
     // Sanity check on response
-    if (response.choices[0].message.content.typeof === 'string') {
+    if (
+      response.choices[0].message.content.typeof === 'string' ||
+      !response ||
+      !response.choices[0].message.content
+    ) {
       Alert.alert('No matches found', 'No matches found for this supplier.');
     } else {
       // Parse response - if matches exist, set state

@@ -9,22 +9,8 @@ type Supplier
   email: String!
   phone: String
   address: String
-  catalogItems: [CatalogItem] @hasMany
   inventoryItems: [InventoryItem] @manyToMany(relationName: "SupplierInventory")
   invoices: [Invoice] @hasMany
-  groups: [String]
-}
-
-type CatalogItem
-  @model
-  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
-  id: ID!
-  supplier: Supplier @belongsTo
-  supplierId: ID!
-  name: String!
-  pricePerUnit: Float
-  availableQuantity: Int
-  inventoryItems: [InventoryItem] @hasMany
   groups: [String]
 }
 
@@ -33,11 +19,11 @@ type InventoryItem
   @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
   id: ID!
   name: String!
-  weight: Float
-  units: Int
-  averagePrice: Float
-  catalogItem: CatalogItem @belongsTo
-  catalogItemId: ID
+  totalQuantity: Int
+  totalWeight: Float
+  unitWeight: Float
+  unitMeasurement: String
+  unitAveragePrice: Float
   invoiceItems: [InvoiceItem] @hasMany
   suppliers: [Supplier] @manyToMany(relationName: "SupplierInventory")
   orderList: [OrderList] @manyToMany(relationName: "InventoryItemOrder")
@@ -80,22 +66,12 @@ type InvoiceItem
   name: String!
   totalQuantity: Int
   acceptedQuantity: Int
-  weight: Float
-  units: Int
+  unitWeight: Float
+  unitMeasurement: String
   pricePerUnit: Float
   expiryDate: AWSDateTime
   accepted: Boolean!
-  rejectionReasons: [RejectionReason] @hasMany
-  groups: [String]
-}
-
-type RejectionReason
-  @model
-  @auth(rules: [{allow: owner}, {allow: groups, groupsField: "groups"}]) {
-  id: ID!
-  invoiceItem: InvoiceItem @belongsTo
-  invoiceItemId: ID!
-  reason: String!
+  rejectionReasons: String
   groups: [String]
 }
 
