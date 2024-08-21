@@ -17,30 +17,6 @@ const InventoryButtonBlock = ({navigation}) => {
             justifyContent: 'center',
           }}>
           <MIcon
-            name="add"
-            size={25}
-            color="#000"
-            style={{
-              margin: 10,
-            }}
-          />
-          <Text style={{fontWeight: 'bold'}}>Create</Text>
-        </Pressable>
-      </View>
-      <View>
-        <Text style={{fontSize: 30}}>|</Text>
-      </View>
-      <View>
-        <Pressable
-          onPress={() => {
-            navigation.navigate('AddInventoryScreen');
-          }}
-          style={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}>
-          <MIcon
             name="search"
             size={25}
             color="#000"

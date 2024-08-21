@@ -38,6 +38,8 @@ const InvoiceCameraScreen = ({navigation}) => {
   const [loading, setLoading] = useState(false);
   const [parsed, setParsed] = useState(false);
   const [blob, setBlob] = useState(null);
+  const [reviewComplete, setReviewComplete] = useState(false);
+  const [saved, setSaved] = useState(false);
   // const [invoiceName, setInvoiceName] = useState(null);
 
   // Extracted data converted to invoice sections
@@ -125,7 +127,6 @@ const InvoiceCameraScreen = ({navigation}) => {
     if (userPoolId !== null) {
       setUserPoolId(userPoolId.toString());
     }
-
     // set invoice name to current datetime
     setInvoiceName(new Date().toISOString());
     console.log('Invoice Name: ', new Date().toISOString());
@@ -141,6 +142,7 @@ const InvoiceCameraScreen = ({navigation}) => {
   console.log('UserPoolId on Camera screen: ', userPoolId);
   console.log('Supplier on Camera Screen: ', parseInvoiceSupplierData);
   console.log('Invoice Items on Camera Screen: ', parseInvoiceItemData);
+  console.log('reviewComplete on Camera Screen: ', reviewComplete);
   // Form setup
 
   const extractData = async fileName => {
@@ -475,6 +477,8 @@ const InvoiceCameraScreen = ({navigation}) => {
                     invoiceUrl={invoiceUrl}
                     invoiceSupplier={parseInvoiceSupplierData}
                     userPoolId={userPoolId}
+                    reviewComplete={reviewComplete}
+                    setReviewComplete={setReviewComplete}
                     key={1}
                   />
                 </View>
@@ -486,6 +490,27 @@ const InvoiceCameraScreen = ({navigation}) => {
                     color="#f56042"
                     style={{alignSelf: 'center'}}
                   />
+                </View>
+              )}
+              {reviewComplete && (
+                <View>
+                  <Pressable
+                    onPress={() => {
+                      navigation.navigate('InventoryScreen');
+                    }}
+                    style={{
+                      backgroundColor: '#b0e298',
+                      width: '100%',
+                      alignItems: 'center',
+                      padding: 20,
+                      alignSelf: 'center',
+                      bottom: 0,
+                      marginTop: 50,
+                    }}>
+                    <Text style={{color: '#2b2d42', fontWeight: 'bold'}}>
+                      NEXT
+                    </Text>
+                  </Pressable>
                 </View>
               )}
             </View>

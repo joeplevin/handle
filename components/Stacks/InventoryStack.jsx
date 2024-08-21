@@ -1,19 +1,19 @@
-import AddInventoryScreen from '../screens/Inventory/AddInventoryScreen';
-import InventoryScreen from '../screens/Inventory/InventoryScreen';
-import InvoiceCameraScreen from '../screens/Inventory/InvoiceCameraScreen';
+import AddInventoryScreen from '../../screens/Inventory/AddInventoryScreen';
+import InventoryScreen from '../../screens/Inventory/InventoryScreen';
+import InvoiceCameraScreen from '../../screens/Inventory/InvoiceCameraScreen';
 import {createStackNavigator} from '@react-navigation/stack';
 import InvoiceItemStack from './InvoiceItemStack';
 import React, {createContext, useState} from 'react';
-import InvoiceReviewItemScreen from '../screens/Inventory/InvoiceReviewItemScreen';
-import InvoiceReviewScreen from '../screens/Inventory/InvoiceReviewScreen';
-import InvoiceReviewSupplierScreen from '../screens/Inventory/InvoiceReviewSupplierScreen';
-import InvoiceReviewDetailsScreen from '../screens/Inventory/InvoiceReviewDetailsScreen';
-import FAIcon from 'react-native-vector-icons/FontAwesome';
+import InvoiceReviewItemScreen from '../../screens/Inventory/InvoiceReviewItemScreen';
+import InvoiceReviewScreen from '../../screens/Inventory/InvoiceReviewScreen';
+import InvoiceReviewSupplierScreen from '../../screens/Inventory/InvoiceReviewSupplierScreen';
+import InvoiceReviewDetailsScreen from '../../screens/Inventory/InvoiceReviewDetailsScreen';
+import FAIcon from 'react-native-vector-icons/FontAwesome6';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
-import {Text, View} from 'react-native';
+import {Text, View, Pressable} from 'react-native';
 import {TouchableOpacity} from 'react-native-gesture-handler';
-import InventoryButtonBlock from './InventoryButtonBlock';
-import {InvoiceProvider} from '../context/InvoiceContext';
+import InventoryButtonBlock from '../InventoryButtonBlock';
+import {InvoiceProvider} from '../../context/InvoiceContext';
 const Stack = createStackNavigator();
 
 const InventoryStack = ({route, navigation}) => {
@@ -30,6 +30,13 @@ const InventoryStack = ({route, navigation}) => {
             headerTitleAlign: 'center',
             headerStyle: {backgroundColor: '#f56042'},
             headerTintColor: 'white',
+            headerRight: () => (
+              <Pressable
+                onPress={() => navigation.navigate('AddInventoryScreen')}
+                style={{paddingRight: 10}}>
+                <FAIcon name="plus" size={20} color="#fff" />
+              </Pressable>
+            ),
           }}
         />
         <Stack.Screen

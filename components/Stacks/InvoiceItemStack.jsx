@@ -1,5 +1,5 @@
 import {createStackNavigator} from '@react-navigation/stack';
-import InvoiceReviewItemScreen from '../screens/Inventory/InvoiceReviewItemScreen';
+import InvoiceReviewItemScreen from '../../screens/Inventory/InvoiceReviewItemScreen';
 const Stack = createStackNavigator();
 
 const InvoiceItemStack = ({route, navigation}) => {

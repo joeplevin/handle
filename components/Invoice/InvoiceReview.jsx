@@ -8,7 +8,7 @@ import {fetchAuthSession} from 'aws-amplify/auth';
 import MIcon from 'react-native-vector-icons/MaterialIcons';
 import {useInvoice} from '../../context/InvoiceContext';
 
-const InvoiceReview = () => {
+const InvoiceReview = ({reviewComplete, setReviewComplete}) => {
   const {
     parseInvoiceItemData,
     parseInvoiceData,
@@ -47,7 +47,8 @@ const InvoiceReview = () => {
 
   const [itemModalVisible, setItemModalVisible] = useState(false);
   const [itemReviewed, setItemReviewed] = useState(false);
-
+  console.log('review complete: ', reviewComplete);
+  console.log('item reviewed: ', itemReviewed);
   const handleSupplierVisible = () => {
     setSupplierModalVisible(false);
     console.log('visible? : ', supplierModalVisible);
@@ -167,7 +168,10 @@ const InvoiceReview = () => {
           style={{
             borderColor: '#b8b8b8',
             padding: 10,
-            width: supplierReviewed && detailsReviewed ? '95%' : '90%',
+            width:
+              supplierReviewed && detailsReviewed && !itemReviewed
+                ? '95%'
+                : '90%',
             alignSelf: 'flex-end',
             backgroundColor: '#fff',
           }}>
@@ -186,12 +190,18 @@ const InvoiceReview = () => {
               // });
               setItemModalVisible(true);
             }}
-            disabled={supplierReviewed && detailsReviewed ? false : true}>
+            disabled={
+              supplierReviewed && detailsReviewed && !itemReviewed
+                ? false
+                : true
+            }>
             <MIcon
               name="fastfood"
               size={20}
               color={
-                supplierReviewed && detailsReviewed ? '#2b2d42' : '#b8b8b8'
+                supplierReviewed && detailsReviewed && !itemReviewed
+                  ? '#2b2d42'
+                  : '#b8b8b8'
               }
             />
             <Text
@@ -199,7 +209,9 @@ const InvoiceReview = () => {
                 marginLeft: 20,
                 width: '80%',
                 color:
-                  supplierReviewed && detailsReviewed ? '#2b2d42' : '#b8b8b8',
+                  supplierReviewed && detailsReviewed && !itemReviewed
+                    ? '#2b2d42'
+                    : '#b8b8b8',
               }}>
               Items
             </Text>
